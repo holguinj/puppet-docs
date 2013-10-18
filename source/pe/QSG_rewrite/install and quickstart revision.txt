@@ -1,0 +1,9 @@
+Add an Install QuickStart to Basic Install:
+
+Add a "Quest Log" checklist to all QuickStart pages.
+
+Install Quick Start is a POC for folk who don't want to read the "install basic" instructions. It's a monolithic install and basically just a checklist 1. Download tarball, 2. run installer, etc.
+
+Then in current Quickstart, make two flows, one for all *nix, one for heterogenous *nix/win (or maybe all win?).
+
+New Separated Install Instructions tied to scaling guide: Install page for each of Small, Medium, Large, etc. where the deployment architecture follows the scaling guide reccs. 
