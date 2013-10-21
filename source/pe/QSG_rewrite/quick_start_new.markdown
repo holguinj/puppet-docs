@@ -1,7 +1,7 @@
 ---
 layout: default
-title: "PE 3.0 » Quick Start » Using PE"
-subtitle: "Quick Start: Using PE 3.0"
+title: "PE 3.1 » Quick Start » Using PE"
+subtitle: "Quick Start: Using PE 3.1"
 ---
 
 [downloads]: http://info.puppetlabs.com/download-pe.html
@@ -13,6 +13,7 @@ Welcome to the Puppet Enterprise 3 quick start guide. This document is a short w
 * Examine and control nodes in real time with live management
 * Install a third-party Puppet module
 * Use the PE console to apply Puppet classes to nodes
+* View the results of configuration changes in the console
 
 > Following this walkthrough will take approximately 30-60 minutes.
 
@@ -306,6 +307,26 @@ Every module contains one or more **classes.** The modules you just installed co
 > Puppet is now managing the first agent node's message of the day file, and will revert it to the specified state if it is ever modified. Puppet is also managing the desktop shortcut on the Windows machine, and will restore it if it is ever deleted or modified.
 >
 > For more recommended modules, [search the Forge](http://forge.puppetlabs.com) or check out the [Module of the Week series on the Puppet Labs blog.](http://puppetlabs.com/category/blog/module-of-the-week-blog/)
+
+### Viewing Changes with Event Inspector
+
+[EI-default]: ./images/quick/EI_default.png
+[EI-class_change]: ./images/quick/EI_class-change.png
+[EI-detail]: ./images/quick/EI_detail.png
+
+Click on the "Events" tab in the main navigation bar. The event inspector window is displayed, showing the default view: classes with failures. Note that in the summary pane on the left, one event, a successful change, has been recorded for Classes, Nodes, and Resources.
+
+![The default event inspector view][EI-default]
+
+You can click on events in the summary pane to inspect them in detail. For example, if you click on "With Changes" in the "Classes With Events" summary view, the main pane will show you that the MOTD class was successfully added when you triggered the last puppet run.
+
+![Viewing a successful change][EI-class_change]
+
+You can keep clicking to drill down and see more detail. You can click the back arrow left of the summary pane or the bread-crumb trail at the top of the page if you want to go back up a level. Eventually, you will end up at a run summary that shows you the details of the event. Note that you can see exactly which piece of puppet code was responsible for generating the event; in this case, it was line 21 of the `init.pp` manifest.
+
+![Event detail][EI-detail]
+
+If there had been a problem with applying this class, this information would tell you exactly what piece of code you need to fix. In this case, event inspector lets you confirm that PE is now managing the `/etc/motd` file.
 
 
 Summary
