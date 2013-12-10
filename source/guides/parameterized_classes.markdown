@@ -19,25 +19,24 @@ Most Puppet coders solved this by using dynamic variable lookup to pass paramete
 
 [parent]: ./scope_and_puppet.html#appendix-how-scope-works-in-puppet--27x
 
-This approach did the job and solved some really important problems, but it had major drawbacks: 
+Parameterized classes were introduced in Puppet 2.6 as a way of encapsulating class-specific variables within the class declaration. Class parameters have several advantages over dynamically-scoped variables:
 
-* **It basically exploded all variables into the global namespace.** Since classes had to look outside their own scope for parameters, parameters were effectively global. That meant you had to anticipate what every other module author was going to name their variables and try to guess something safe. 
-* **Understanding how to declare a class was not exactly straightforward.** There was no built-in way to tell what parameters a class needed to have set, so you were on your own for documenting it and following the rules to the letter. Optional parameters in particular could bite you at exactly the wrong time. 
-* **It was just plain confusing.** The rules for how a parent scope is assigned can fit on an index card, but they can interact in some extraordinarily hairy ways. ([ibid.][parent])
+* **They keep class-specific variables out of the global namespace.** If your class has to look outside its own scope for parameters, the parameters are effectively global. That means you'd have to anticipate what every other module author is going to name their variables and try to guess something safe. Parameters, on the other hand, only have to be unique within a given class.
+* **They make it clear how to declare a particular class.** Before parameterized classes were introduced, there was no built-in way to tell what parameters a class needed to have set, so you were on your own for documenting it and following the rules to the letter. Optional parameters in particular could bite you at exactly the wrong time. Class parameters (and their default values, if any) are now included at the top of the class definition, making it easy to see exactly what information the class expects.
+* **They avoid confusion stemming from variable scope.** The rules for how a parent scope is assigned can fit on an index card, but they can interact in some extraordinarily hairy ways. ([ibid.][parent]) 
 
-So to shorten a long story, Puppet 2.6 introduced a better and more direct way to pass parameters into a class.
  
 Philosophy
 ----------
 
-A class that depends on dynamic scope for its parameters has to do its own research. Instead, you should supply it with a full dossier when you declare it. Start thinking in terms of passing information to the class, instead of in terms of setting variables and getting scope to act right. 
+A class that depends on dynamic scope for its parameters has to do its own research. Instead, you should supply it with a full dossier when you declare it. You should be thinking in terms of passing information to the class, instead of in terms of setting variables and getting scope to act right. 
 
 Using Parameterized Classes
 ---------------------------
 
 ### Writing a Parameterized Class
 
-Parameterized classes are defined just like classical classes, but with a list of parameters (in parentheses) between the class name and the opening bracket: 
+Parameterized classes are defined just like other classes, but with a list of parameters (in parentheses) between the class name and the opening bracket: 
 
 {% highlight ruby %}
     class webserver( $vhost_dir, $packages ) {
