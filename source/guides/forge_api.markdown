@@ -29,7 +29,7 @@ Features
 * The API is accessed over HTTPS via the `forgeapi.puppetlabs.com` domain. All data is returned in JSON format.
 * Blank fields are included as `null`.
 * Nested resources will use an abbreviated representation. A link to the full representation for the resource will always be included.
-* All timestamps are returned in ISO 8601 format: ```YYYY-MM-DD HH:MM:SS ±HHMM```
+* All timestamps are returned in ISO 8601 format: `YYYY-MM-DD HH:MM:SS ±HHMM`.
 * The HTTP response headers include caching hints for [conditional requests](#conditional-requests).
 
 
