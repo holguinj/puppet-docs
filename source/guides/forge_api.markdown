@@ -9,13 +9,17 @@ The Puppet Forge API (hereafter referred to as the Forge API) enables you to wri
 
 Tools such as the puppet module tool and librarian-puppet use the Forge API to query and install modules, and tools like Geppetto or Pulp leverage the API to solve development workflow challenges.
 
+Interactive Demonstration
+-------------------------
+This interface provides an interactive demonstration of the Forge API, along with additional notes about the different endpoints and available parameters. You can use the web forms to craft a query and see the results immediately. 
+
 {% include swagger_div.html %}
 
 Current Version
 ---------------
 The Forge API's current version is `v3`. It’s considered regression-stable, meaning that the returned data is guaranteed to match the schema described on this page, however, additional data may be added in the future and existing clients may ignore any properties they do not recognize.
 
-The API currently exposes three resource types: [Users](#!/user), [Modules](#!/module), and [Releases](#!/release). Details for these resources, including available parameters and response schemas, can be found within the interactive UI at the top of this page.
+The API currently exposes three resource types: Users, Modules, and Releases. Details for these resources, including available parameters and response schemas, can be found within the interactive UI above this section.
 
 This version of the API does not currently support authentication or any of the operations that would normally require authentication, such as publishing, updating, or deleting modules.
 
