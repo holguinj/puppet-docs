@@ -1,0 +1,66 @@
+{
+  "apiVersion": "v3",
+  "swaggerVersion": "1.2",
+  "basePath": "http://localhost:9292/files/swagger/api/",
+  "apis": [
+    {
+      "path": "v3/module",
+      "description": "Get information about modules"
+    },
+    {
+      "path": "v3/user",
+      "description": "Get information about users"
+    },
+    {
+      "path": "v3/release",
+      "description": "Get information about releases"
+    }
+  ],
+  "models": {
+    "ModuleAbbreviated": {
+      "id": "ModuleAbbreviated",
+      "properties": {
+        "uri": {
+          "type": "string",
+          "required": true,
+          "description": "the URI for this module"
+        },
+        "name": {
+          "type": "string",
+          "required": true,
+          "description": "the name of this module"
+        }
+      }
+    },
+    "UserAbbreviated": {
+      "id": "UserAbbreviated",
+      "properties": {
+        "uri": {
+          "type": "string",
+          "required": true,
+          "description": "the URI at which this users specifics can be found"
+        },
+        "username": {
+          "type": "string",
+          "required": true,
+          "description": "the username of this user"
+        }
+      }
+    },
+    "ReleaseAbbreviated": {
+      "id": "ReleaseAbbreviated",
+      "properties": {
+        "uri": {
+          "type": "string",
+          "required": true,
+          "description": "the URI for this release"
+        },
+        "version": {
+          "type": "string",
+          "required": true,
+          "description": "the version of this release"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,175 @@
+{
+  "apiVersion": null,
+  "swaggerVersion": "1.2",
+  "basePath": "http://www.corsproxy.com/forgeapi.puppetlabs.com/v3",
+  "resourcePath": "/user",
+  "produces": [
+    "application/json"
+  ],
+  "apis": [
+    {
+      "path": "/users",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": "Get a list of users",
+          "notes": "Provides information about Puppet Forge user accounts. By default, results are returned in alphabetical order by <br>username</b> and paginated with 20 users per page. It's also possible to sort by number of published <b>releases</b>, total <b>download</b> counts for all the user's modules, or by the date of the user's <b>latest release</b>.",
+          "responseClass": "Pagination",
+          "nickname": "getUsers",
+          "parameters": [
+            {
+              "name": "sort_by",
+              "description": "Changes the order of returned results",
+              "required": false,
+              "allowMultiple": false,
+              "dataType": "string",
+              "paramType": "query",
+              "defaultValue": "",
+              "enum": [
+                "username",
+                "releases",
+                "downloads",
+                "latest_release"
+              ]
+            },
+            {
+              "name": "limit",
+              "description": "Limits the number of results per page (default is 20)",
+              "required": false,
+              "allowMultiple": false,
+              "dataType": "integer",
+              "paramType": "query"
+            },
+            {
+              "name": "offset",
+              "description": "Omits results from the beginning of the set, used for pagination (default is 0)",
+              "required": false,
+              "dataType": "integer",
+              "paramType": "query"
+            },
+            {
+              "name": "If-Modified-Since",
+              "description": "Only processes the request if there has been a change since this time",
+              "defaultValue": "Mon, 16 Dec 2013 22:09:00 GMT",
+              "required": false,
+              "dataType": "date-time",
+              "paramType": "header"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "/users/{user}",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": "Get data about a given user",
+          "notes": "Returns a bunch of data about the specified user.",
+          "responseClass": "User",
+          "nickname": "getUser",
+          "parameters": [
+            {
+              "name": "user",
+              "description": "The username to query by",
+              "required": false,
+              "allowMultiple": false,
+              "dataType": "string",
+              "paramType": "path"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "models": {
+    "Pagination": {
+        "id": "Pagination",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "required": true,
+            "description": "the total number of results available"
+          },
+          "limit": {
+            "type": "integer",
+            "required": true,
+            "description": "the maximum size of the current page"
+          },
+          "offset": {
+            "type": "integer",
+            "required": true,
+            "description": "the index of the first result (zero-based)"
+          },
+          "current": {
+            "type": "uri",
+            "required": "true",
+            "description": "the URI for the current page of results"
+          },
+          "next": {
+            "type": "uri",
+            "required": "true",
+            "description": "the URI for the next page of results"
+          },
+          "previous": {
+            "type": "uri",
+            "required": "true",
+            "description": "the URI for the previous page of results (may be null)"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+            "$ref": "User"
+            },
+          "required": true,
+          "description": "the results"
+        }
+      }
+      },
+    "User": {
+      "id": "User",
+      "properties": {
+        "uri": {
+          "type": "uri",
+          "required": true,
+          "description": "the URI at which this users specifics can be found"
+        },
+        "gravatar_id": {
+          "type": "string",
+          "required": true,
+          "description": "the user's avatar ID from gravatar.com"
+        },
+        "username": {
+          "type": "string",
+          "required": true,
+          "description": "the username of this user"
+        },
+        "display_name": {
+          "type": "string",
+          "required": true,
+          "description": "the user's display name"
+        },
+        "release_count": {
+          "type": "integer",
+          "required": true,
+          "description": "the number of releases this user has published"
+        },
+        "module_count": {
+          "type": "integer",
+          "required": true,
+          "description": "the number of modules this user has published"
+        },
+        "created_at": {
+          "type": "date-time",
+          "required": true,
+          "description": "date when this user was created"
+        },
+        "updated_at": {
+          "type": "date-time",
+          "required": true,
+          "description": "date when this user was last updated"
+        }
+      }
+    }
+  }
+}

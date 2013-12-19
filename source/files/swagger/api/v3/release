@@ -1,0 +1,273 @@
+{
+  "apiVersion": null,
+  "swaggerVersion": "1.2",
+  "basePath": "http://www.corsproxy.com/forgeapi.puppetlabs.com/v3",
+  "resourcePath": "/releases",
+  "produces": [
+    "application/json"
+  ],
+  "apis": [
+    {
+      "path": "/releases",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": "Get a list of releases",
+          "notes": "Returns a paginated list of results.",
+          "responseClass": "Pagination",
+          "nickname": "getReleases",
+          "parameters": [
+            {
+              "name": "module",
+              "description": "Takes the form of '{user}-{module}', limits the results to releases of that module",
+              "required": false,
+              "allowMultiple": false,
+              "dataType": "string",
+              "paramType": "query"
+            },
+            {
+              "name": "owner",
+              "description": "Limits results to modules with a given owner",
+              "required": false,
+              "allowMultiple": false,
+              "dataType": "string",
+              "paramType": "query"
+            },
+            {
+              "name": "version",
+              "description": "Limits results to releases matching a version range (format?)",
+              "required": false,
+              "allowMultiple": false,
+              "dataType": "string",
+              "paramType": "query"
+            },
+            {
+              "name": "show_deleted",
+              "description": "Include deleted releases in the results",
+              "required": false,
+              "allowMultiple": false,
+              "dataType": "boolean",
+              "paramType": "query"
+            },
+            {
+              "name": "sort_by",
+              "description": "Change the order in which results are returned.",
+              "required": false,
+              "allowMultiple": false,
+              "dataType": "string",
+              "paramType": "query",
+              "defaultValue": "",
+              "enum": [
+                "downloads",
+                "release_date",
+                "module"
+              ]
+            },
+            {
+              "name": "limit",
+              "description": "Limits the number of results per page (default is 20)",
+              "required": false,
+              "allowMultiple": false,
+              "dataType": "integer",
+              "paramType": "query"
+            },
+            {
+              "name": "offset",
+              "description": "Omits results from the beginning of the set, used for pagination (default is 0)",
+              "required": false,
+              "dataType": "integer",
+              "paramType": "query"
+            },
+            {
+              "name": "If-Modified-Since",
+              "description": "Only processes the request if there has been a change since this time",
+              "defaultValue": "Mon, 16 Dec 2013 22:09:00 GMT",
+              "required": false,
+              "dataType": "date-time",
+              "paramType": "header"
+            }            
+          ]
+        }
+      ]
+    },
+    {
+      "path": "/releases/{user}-{module}-{version}",
+      "operations": [
+        {
+          "method": "GET",
+          "summary": "Returns information about a given release.",
+          "notes": "This operation does not accept any optional parameters.",
+          "responseClass": "Release",
+          "nickname": "getRelease",
+          "parameters": [
+            {
+              "name": "user",
+              "description": "The owner of the module",
+              "required": true,
+              "defaultValue": "puppetlabs",
+              "allowMultiple": false,
+              "dataType": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "module",
+              "description": "The module name",
+              "required": true,
+              "defaultValue": "ntp",
+              "allowMultiple": false,
+              "dataType": "string",
+              "paramType": "path"
+            },
+            {
+              "name": "version",
+              "description": "The version number",
+              "required": true,
+              "allowMultiple": false,
+              "defaultValue": "1.0.0",
+              "dataType": "string",
+              "paramType": "path"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "models": {
+    "Pagination": {
+        "id": "Pagination",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "required": true,
+            "description": "the total number of results available"
+          },
+          "limit": {
+            "type": "integer",
+            "required": true,
+            "description": "the maximum size of the current page"
+          },
+          "offset": {
+            "type": "integer",
+            "required": true,
+            "description": "the index of the first result (zero-based)"
+          },
+          "current": {
+            "type": "uri",
+            "required": "true",
+            "description": "the URI for the current page of results"
+          },
+          "next": {
+            "type": "uri",
+            "required": "true",
+            "description": "the URI for the next page of results"
+          },
+          "previous": {
+            "type": "uri",
+            "required": "true",
+            "description": "the URI for the previous page of results (may be null)"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+            "$ref": "Release"
+            },
+          "required": true,
+          "description": "the results"
+        }
+      }
+      },    
+    "Release": {
+      "id": "Release",
+      "properties": {
+        "uri": {
+          "type": "uri",
+          "required": true,
+          "description": "the URI for this release"
+        },
+        "version": {
+          "type": "string",
+          "required": true,
+          "description": "the version of this release"
+        },
+        "module": {
+          "$ref": "ModuleAbbreviated",
+          "required": true,
+          "description": "the abbreviated representation of this release's module"
+        },
+        "metadata": {
+          "type": "object",
+          "required": true,
+          "description": "the metadata.json for this release"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "required": true,
+          "description": "the tags on this release"
+        },
+        "file_size": {
+          "type": "integer",
+          "required": true,
+          "description": "the size of the module in bytes"
+        },
+        "file_md5": {
+          "type": "string",
+          "required": true,
+          "description": "the md5 checksum of this module"
+        },
+        "downloads": {
+          "type": "integer",
+          "required": true,
+          "description": "the number of times this release has been downloaded"
+        },
+        "readme": {
+          "type": "string",
+          "required": true,
+          "description": "the readme file extracted from this module, rendered as HTML"
+        },
+        "changelog": {
+          "type": "string",
+          "required": true,
+          "description": "the changelog file extracted from this module, rendered as HTML"
+        },
+        "license": {
+          "type": "string",
+          "required": true,
+          "description": "the license file extracted from this module, rendered as HTML"
+        },
+        "created_at": {
+          "type": "date-time",
+          "required": true,
+          "description": "date when this release was created"
+        },
+        "updated_at": {
+          "type": "date-time",
+          "required": true,
+          "description": "date when this release was last changed"
+        },
+        "deleted_at": {
+          "type": "date-time",
+          "required": true,
+          "description": "date when this release was deleted or nil"
+        }
+      }
+    },
+    "ModuleAbbreviated": {
+      "id": "ModuleAbbreviated",
+      "properties": {
+        "uri": {
+          "type": "string",
+          "required": true,
+          "description": "the URI for this module"
+        },
+        "name": {
+          "type": "string",
+          "required": true,
+          "description": "the name of this module"
+        }
+      }
+    }
+  }
+}
