@@ -44,12 +44,12 @@ X.509 certificates can have many kinds of data embedded, but Puppet only uses a 
 * **Certname:** Puppet uses the CN ("common name") portion of the Subject field as the unique identifier for each certificate.
     * When a puppet agent node or puppet master is requesting a certificate, it uses its `certname` setting (which defaults to the node's fully qualified domain name) as the requested Subject CN.
     * If a node's `certname` setting is changed after it has a certificate, it will assume that certificate belongs to someone else and request a new certificate with the new name.
-* **Alternate DNS names:** In the
-X509v3 Subject Alternative Name:
+* **Alternate DNS names:** In the "X509v3 extensions" section of the certificate, the "X509v3 Subject Alternative Name" subsection may include any number of "DNS:" entries, each of which should be a hostname. These entries allow the bearer of the certificate to
 * **Validity:** Each certificate has a period for which it is valid, with a start date and an end date. Outside that period, any agent or master presented with that certificate will consider it invalid and reject the connection. Expired certificates will have to be [replaced][replace_expired_certificate].
-* **Public key:** The public key embedded in the certificate is used for encrypting communications and verifying that the entity presenting the certificate possesses the corresponding private key.
-* **Signature:** The CA's signature proves that whoever has the private key for this certificate is authorized to use the certname of that certificate and any alternate DNS names.
-* **CA permissions:** In the "X509v3 extensions" "X509v3 Basic Constraints" section of the certificate, the "CA" attribute determines whether the certificate can sign other certificates. Every Puppet certificate except the CA certificate should have `CA:FALSE` set.
+    * The CA sets the validity period when it signs a new certificate, using the value of its `ca_ttl` setting (defaults to five years).
+* **Public key:** The public key embedded in the certificate is used for encrypting communications and verifying that the bearer of the certificate possesses the corresponding private key.
+* **Signature:** The CA's signature proves that the bearer of this certificate is authorized to use Puppet services and go by the certname or any alternate DNS names in that certificate.
+* **CA permissions:** In the "X509v3 extensions" section of the certificate ("X509v3 Basic Constraints" subsection), the "CA" entry determines whether the certificate can sign other certificates. Every Puppet certificate except the CA certificate should have `CA:FALSE` set.
 
 
 ### Certificate Storage / `ssldir`
