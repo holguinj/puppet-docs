@@ -129,6 +129,14 @@ table {
   max-width: 960px;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 0;
+  padding-left: 0;
+}
+.swagger-ui-wrap ul#resources div.heading h2 {
+  margin-bottom: 0;
+}
+.swagger-ui-wrap div.heading ul li {
+  margin-bottom: 0 !important;
 }
 .swagger-ui-wrap b,
 .swagger-ui-wrap strong {
@@ -1009,6 +1017,12 @@ table {
 }
 .swagger-ui-wrap form.form_box p strong {
   color: black;
+}
+.swagger-ui-wrap div.heading {
+  line-height: 0;
+}
+.swagger-ui-wrap ul.options {
+  line-height: 1em;
 }
 #header {
   background-color: #89bf04;
