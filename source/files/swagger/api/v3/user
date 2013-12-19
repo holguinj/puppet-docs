@@ -1,5 +1,5 @@
 {
-  "apiVersion": null,
+  "apiVersion": "v3",
   "swaggerVersion": "1.2",
   "basePath": "http://www.corsproxy.com/forgeapi.puppetlabs.com/v3",
   "resourcePath": "/user",
@@ -13,7 +13,7 @@
         {
           "method": "GET",
           "summary": "Get a list of users",
-          "notes": "Provides information about Puppet Forge user accounts. By default, results are returned in alphabetical order by <br>username</b> and paginated with 20 users per page. It's also possible to sort by number of published <b>releases</b>, total <b>download</b> counts for all the user's modules, or by the date of the user's <b>latest release</b>.",
+          "notes": "Provides information about Puppet Forge user accounts. By default, results are returned in alphabetical order by <br>username</b> and paginated with 20 users per page. It's also possible to sort by number of published <b>releases</b>, total <b>download</b> counts for all the user's modules, or by the date of the user's <b>latest release</b>. All parameters are optional.",
           "responseClass": "Pagination",
           "nickname": "getUsers",
           "parameters": [
@@ -65,14 +65,14 @@
         {
           "method": "GET",
           "summary": "Get data about a given user",
-          "notes": "Returns a bunch of data about the specified user.",
+          "notes": "Returns data about the specified user.",
           "responseClass": "User",
           "nickname": "getUser",
           "parameters": [
             {
               "name": "user",
               "description": "The username to query by",
-              "required": false,
+              "required": true,
               "allowMultiple": false,
               "dataType": "string",
               "paramType": "path"
@@ -84,48 +84,48 @@
   ],
   "models": {
     "Pagination": {
-        "id": "Pagination",
-        "properties": {
-          "total": {
-            "type": "integer",
-            "required": true,
-            "description": "the total number of results available"
-          },
-          "limit": {
-            "type": "integer",
-            "required": true,
-            "description": "the maximum size of the current page"
-          },
-          "offset": {
-            "type": "integer",
-            "required": true,
-            "description": "the index of the first result (zero-based)"
-          },
-          "current": {
-            "type": "uri",
-            "required": "true",
-            "description": "the URI for the current page of results"
-          },
-          "next": {
-            "type": "uri",
-            "required": "true",
-            "description": "the URI for the next page of results"
-          },
-          "previous": {
-            "type": "uri",
-            "required": "true",
-            "description": "the URI for the previous page of results (may be null)"
-          },
-          "results": {
-            "type": "array",
-            "items": {
+      "id": "Pagination",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "required": true,
+          "description": "the total number of results available"
+        },
+        "limit": {
+          "type": "integer",
+          "required": true,
+          "description": "the maximum size of the current page"
+        },
+        "offset": {
+          "type": "integer",
+          "required": true,
+          "description": "the index of the first result (zero-based)"
+        },
+        "current": {
+          "type": "uri",
+          "required": "true",
+          "description": "the URI for the current page of results"
+        },
+        "next": {
+          "type": "uri",
+          "required": "true",
+          "description": "the URI for the next page of results"
+        },
+        "previous": {
+          "type": "uri",
+          "required": "true",
+          "description": "the URI for the previous page of results (may be null)"
+        },
+        "results": {
+          "type": "array",
+          "items": {
             "$ref": "User"
-            },
+          },
           "required": true,
           "description": "the results"
         }
       }
-      },
+    },
     "User": {
       "id": "User",
       "properties": {
