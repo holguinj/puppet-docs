@@ -1,5 +1,5 @@
 {
-  "apiVersion": null,
+  "apiVersion": "v3",
   "swaggerVersion": "1.2",
   "basePath": "http://www.corsproxy.com/forgeapi.puppetlabs.com/v3",
   "resourcePath": "/releases",
