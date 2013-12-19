@@ -13,7 +13,7 @@
         {
           "method": "GET",
           "summary": "Get a list of releases",
-          "notes": "Returns a paginated list of results.",
+          "notes": "Returns a paginated list of module releases. The results can be limited in a number of ways, but all of the parameters are optional.",
           "responseClass": "Pagination",
           "nickname": "getReleases",
           "parameters": [
@@ -35,7 +35,7 @@
             },
             {
               "name": "version",
-              "description": "Limits results to releases matching a version range (format?)",
+              "description": "Limits results to releases matching a version range",
               "required": false,
               "allowMultiple": false,
               "dataType": "string",
@@ -85,7 +85,7 @@
               "required": false,
               "dataType": "date-time",
               "paramType": "header"
-            }            
+            }
           ]
         }
       ]
@@ -95,8 +95,8 @@
       "operations": [
         {
           "method": "GET",
-          "summary": "Returns information about a given release.",
-          "notes": "This operation does not accept any optional parameters.",
+          "summary": "Returns information about a given release",
+          "notes": "This operation does not accept any optional parameters. If you would rather not specify one or more of these values, construct your query using the <b>/releases</b> endpoint described above.",
           "responseClass": "Release",
           "nickname": "getRelease",
           "parameters": [
@@ -134,48 +134,48 @@
   ],
   "models": {
     "Pagination": {
-        "id": "Pagination",
-        "properties": {
-          "total": {
-            "type": "integer",
-            "required": true,
-            "description": "the total number of results available"
-          },
-          "limit": {
-            "type": "integer",
-            "required": true,
-            "description": "the maximum size of the current page"
-          },
-          "offset": {
-            "type": "integer",
-            "required": true,
-            "description": "the index of the first result (zero-based)"
-          },
-          "current": {
-            "type": "uri",
-            "required": "true",
-            "description": "the URI for the current page of results"
-          },
-          "next": {
-            "type": "uri",
-            "required": "true",
-            "description": "the URI for the next page of results"
-          },
-          "previous": {
-            "type": "uri",
-            "required": "true",
-            "description": "the URI for the previous page of results (may be null)"
-          },
-          "results": {
-            "type": "array",
-            "items": {
+      "id": "Pagination",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "required": true,
+          "description": "the total number of results available"
+        },
+        "limit": {
+          "type": "integer",
+          "required": true,
+          "description": "the maximum size of the current page"
+        },
+        "offset": {
+          "type": "integer",
+          "required": true,
+          "description": "the index of the first result (zero-based)"
+        },
+        "current": {
+          "type": "uri",
+          "required": "true",
+          "description": "the URI for the current page of results"
+        },
+        "next": {
+          "type": "uri",
+          "required": "true",
+          "description": "the URI for the next page of results"
+        },
+        "previous": {
+          "type": "uri",
+          "required": "true",
+          "description": "the URI for the previous page of results (may be null)"
+        },
+        "results": {
+          "type": "array",
+          "items": {
             "$ref": "Release"
-            },
+          },
           "required": true,
           "description": "the results"
         }
       }
-      },    
+    },
     "Release": {
       "id": "Release",
       "properties": {
