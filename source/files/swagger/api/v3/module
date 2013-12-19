@@ -13,7 +13,7 @@
         {
           "method": "GET",
           "summary": "Search for modules",
-          "notes": "Results are paginated and all of the parameters are optional.",
+          "notes": "Returns a list of modules meeting the specified criteria. Results are paginated and all of the parameters are optional.",
           "responseClass": "Pagination",
           "nickname": "getModules",
           "parameters": [
