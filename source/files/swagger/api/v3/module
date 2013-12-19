@@ -1,5 +1,5 @@
 {
-  "apiVersion": null,
+  "apiVersion": "v3",
   "swaggerVersion": "1.2",
   "basePath": "http://www.corsproxy.com/forgeapi.puppetlabs.com/v3",
   "resourcePath": "/",
@@ -13,7 +13,7 @@
         {
           "method": "GET",
           "summary": "Search for modules",
-          "notes": "",
+          "notes": "Results are paginated and all of the parameters are optional.",
           "responseClass": "Pagination",
           "nickname": "getModules",
           "parameters": [
@@ -85,7 +85,7 @@
               "required": false,
               "dataType": "date-time",
               "paramType": "header"
-            }            
+            }
           ]
         }
       ]
@@ -96,7 +96,7 @@
         {
           "method": "GET",
           "summary": "Find latest module for a user and module name",
-          "notes": "Requires both user and module to be defined.",
+          "notes": "Requires both user and module to be defined. No optional parameters are supported for this endpoint, so use the <b>/modules</b> endpoint if you want to omit something and/or specify additional criteria.",
           "nickname": "getModule",
           "produces": [
             "application/json"
@@ -128,48 +128,48 @@
   ],
   "models": {
     "Pagination": {
-        "id": "Pagination",
-        "properties": {
-          "total": {
-            "type": "integer",
-            "required": true,
-            "description": "the total number of results available"
-          },
-          "limit": {
-            "type": "integer",
-            "required": true,
-            "description": "the maximum size of the current page"
-          },
-          "offset": {
-            "type": "integer",
-            "required": true,
-            "description": "the index of the first result (zero-based)"
-          },
-          "current": {
-            "type": "uri",
-            "required": "true",
-            "description": "the URI for the current page of results"
-          },
-          "next": {
-            "type": "uri",
-            "required": "true",
-            "description": "the URI for the next page of results"
-          },
-          "previous": {
-            "type": "uri",
-            "required": "true",
-            "description": "the URI for the previous page of results (may be null)"
-          },
-          "results": {
-            "type": "array",
-            "items": {
+      "id": "Pagination",
+      "properties": {
+        "total": {
+          "type": "integer",
+          "required": true,
+          "description": "the total number of results available"
+        },
+        "limit": {
+          "type": "integer",
+          "required": true,
+          "description": "the maximum size of the current page"
+        },
+        "offset": {
+          "type": "integer",
+          "required": true,
+          "description": "the index of the first result (zero-based)"
+        },
+        "current": {
+          "type": "uri",
+          "required": "true",
+          "description": "the URI for the current page of results"
+        },
+        "next": {
+          "type": "uri",
+          "required": "true",
+          "description": "the URI for the next page of results"
+        },
+        "previous": {
+          "type": "uri",
+          "required": "true",
+          "description": "the URI for the previous page of results (may be null)"
+        },
+        "results": {
+          "type": "array",
+          "items": {
             "$ref": "Module"
-            },
+          },
           "required": true,
           "description": "the results"
         }
       }
-      },    
+    },
     "Module": {
       "id": "Module",
       "properties": {
