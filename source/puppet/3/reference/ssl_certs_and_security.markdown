@@ -8,8 +8,16 @@ title: "SSL: Certificates and Security"
 [autosigning]: TODO
 [csr_attributes]: TODO
 [external_ca]: TODO
+[agent_web_server]: todo
+[replace_expired_certificate]: todo
+[attributes_and_extensions]: todo
+[ssldir]: todo
+[https_wiki]: todo
+[masterport]: todo
+[ssl_client_header]: todo
+[ssl_client_verify_header]: todo
 
-Puppet uses TLS/SSL (usually referred to as simply "SSL" on this site) to secure its HTTPS communications. It includes a built-in certificate authority and several systems that use the certificates once they have been issued. This page describes the latter.
+Puppet uses TLS/SSL (often referred to as simply "SSL;" on this site, the terms should be considered interchangeable) to secure its HTTPS communications. It includes a built-in certificate authority and several systems that use the certificates once they have been issued. This page describes the latter.
 
 > Related Pages
 > -----
@@ -99,20 +107,46 @@ Puppet has built-in CA tools and certificate request tools to fulfill these requ
 HTTPS
 -----
 
-Network communication between agent nodes and puppet masters happens over industry-standard [HTTPS][https_wiki].
+Network communication between agent nodes and puppet masters happens over industry-standard [HTTPS][https_wiki], which wraps the HTTP protocol with TLS/SSL.
 
-* Most of Puppet's traffic also requires client authentication.
-* Puppet's traffic is usually on port 8140 (configurable with the [`masterport` setting][masterport]).
+* Most of Puppet's traffic also requires client authentication, so it behaves somewhat differently from most HTTPS on the public internet.
+* Puppet's traffic is usually on port 8140 (configurable with the [`masterport` setting][masterport]) instead of the default HTTPS port of 443.
+
+### Encryption
+
+In HTTPS, all traffic is encrypted by SSL. This includes header information and the requested URL path --- there is no way to tell what the client requested until the request is decrypted. This provides in-transit protection for all of Puppet's traffic, so that eavesdroppers on the network cannot decrypt requests or replies.
+
+Technically, the keys embedded in certificates are not used for traffic encryption; they are used to negotiate the secure exchange of a temporary key, which is then used for traffic encryption.
+
+### Server Authentication
+
+> **Note:** In general, "server" means either the puppet master server or whatever proxy is terminating SSL for it (see the section on SSL termination below). However, this can be reversed when using [puppet agent's web server][agent_web_server].
+
+In SSL, a server must present a valid certificate (for which it possesses the corresponding private key) when clients connect to it. The client will use their copy of the CA certificate validate the signature on the server's certificate. This allows clients to verify that the server is who it claims to be.
+
+In human-centered over-the-internet HTTPS, the user of a client is presented with a verified organization name, and must use social knowledge about that organization to decide whether to trust the connection.
+
+In Puppet, clients are configured ahead of time to connect to the server at a particular hostname. When presented with the certificate, they will check both the certname (Subject CN) and any alternate DNS names (X509v3 Subject Alternative Name), all of which have presumably been verified by the CA before signing the certificate. If the hostname the client reached the server at is included in that list of verified names, the client will treat the server as a trustworthy puppet master. If not, the client will reject the connection and bail.
 
 ### Client Authentication
 
+> **Note:** In general, "client" means the puppet agent application when contacting a puppet master server. However, this can be reversed when using [puppet agent's web server][agent_web_server].
+
 Client authentication is an additional security measure available in TLS/SSL. It is not used by most HTTPS traffic on the public internet.
 
-In normal SSL, a server must present a valid certificate (for which it possesses the corresponding private key) when clients connect to it. The client will validate the signature on that certificate to ensure that the server is who it claims to be.
-
-In client-authenticated SSL, the client must also present a valid certificate, which will be validated by the server to verify the client's identity. If it disbelieves the client's identity, or if the identity is valid but not authorized to access a given resource, the server can reject the connection.
+In client-authenticated SSL, the client must also present a valid certificate when connecting to a server. The client's certificate will be validated by the server to verify the client's identity. If the server disbelieves the client's identity, or if the identity is valid but not authorized to access a given resource, the server can reject the connection.
 
 In Puppet's case, this means an agent node must have a signed certificate in order to access most of the services provided by the puppet master server. The list of service endpoints requiring client authentication can be configured in auth.conf; see below.
+
+Once the client is authenticated, the server will also check to make sure the client is _authorized_ to access any given service. See "authorization" below.
+
+### Revoked Certificates
+
+The Puppet CA maintains a certificate revocation list (CRL). This is a document that identifies certificates that are no longer trusted.
+
+Clients regularly retrieve a copy of the CRL from the CA puppet master. A CA puppet master should already have access to the CRL; non-CA puppet masters must either regularly run puppet agent targeting a CA puppet master, or must have the CRL regularly deployed by some out-of-band process. (If you are using an external CA, you must distribute this file manually to all interested nodes.) Any SSL-terminating front-end web server for a puppet master must be configured to use the puppet master's CRL, and most web servers must be restarted in order to reload a CRL that has been changed.
+
+If any certificate presented to a client or server is included in the CRL, that client or server will reject the connection and bail, regardless of any other bona-fides in that certificate.
 
 ### Puppet Master Web Servers and SSL Termination
 
@@ -144,18 +178,6 @@ By default, nodes running puppet apply to locally compile and apply their catalo
 * Upload its catalog to a PuppetDB server
 
 All of these tasks would still use client-authenticated HTTPS, and the node would still require a signed certificate for them.
-
-Authentication
------
-
-### Agents Validate the Master's Identity
-
-#### DNS Alt Names
-
-
-### Masters Validate Agent Identities
-
-### Revoked Certificates
 
 
 
