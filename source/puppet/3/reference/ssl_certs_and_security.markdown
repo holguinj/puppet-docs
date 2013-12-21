@@ -51,9 +51,10 @@ X.509 certificates can have many kinds of data embedded, but Puppet only uses a 
 * **Public key:** The public key embedded in the certificate is used for encrypting communications and verifying that the bearer of the certificate possesses the corresponding private key.
 * **Signature:** The CA's signature proves that the bearer of this certificate is authorized to use Puppet services and go by the certname or any alternate DNS names in that certificate.
 * **CA permissions:** In the "X509v3 extensions" section of the certificate ("X509v3 Basic Constraints" subsection), the "CA" entry determines whether the certificate can sign other certificates. Every Puppet certificate except the CA certificate should have `CA:FALSE` set.
+* **Arbitrary extensions:** These are only used in a limited fashion today. See the page on [CSR attributes and cert extensions][attributes_and_extensions] for details.
 
 
-### Certificate Storage / `ssldir`
+### Certificate Locations / `ssldir`
 
 All certificates, private keys, CSRs, and other crypto documents are stored on disk in PEM format in Puppet's "ssldir," whose location can be configured with the [`ssldir` setting][ssldir]. The permissions mode of the ssldir should be 0771, and it and every file it contains should be owned by the user Puppet runs as (i.e., root or Administrator on puppet agent nodes and defaulting to `puppet` on a puppet master server).
 
@@ -92,22 +93,57 @@ By default, Puppet is configured to require the following infrastructure:
 * All agent nodes **must** have a signed certificate. If they do not, they cannot request configuration data, although they can download the CA's credentials and request a certificate.
 * Any puppet master server must have a signed certificate. Additionally, the hostname at which agent nodes contact it **must** be present in the certificate, either as the Subject CN value or as one of the Subject Alternative Name (DNS) values.
 
-Puppet has built-in CA tools to fulfill these requirements; alternately, an external CA can fulfill them. For details on how to issue certificates, see [Signing and Managing Certificates with Puppet's CA][cert_sign].
+Puppet has built-in CA tools and certificate request tools to fulfill these requirements; alternately, an external CA can fulfill them. For details on how to issue certificates, see [Signing and Managing Certificates with Puppet's CA][cert_sign].
 
 
 HTTPS
 -----
 
-All of Puppet's network traffic is HTTPS --- that is, HTTP over TLS/SSL. Traffic is usually on port 8140 (configurable with the [`masterport` setting][masterport]).
+Network communication between agent nodes and puppet masters happens over industry-standard [HTTPS][https_wiki].
 
-A full explanation of HTTPS is beyond the scope of this page (start with [the Wikipedia page for HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure) and continue from there), but in general,
+* Most of Puppet's traffic also requires client authentication.
+* Puppet's traffic is usually on port 8140 (configurable with the [`masterport` setting][masterport]).
 
-### Client Authentication (Or Not)
+### Client Authentication
 
-### Terminating SSL with a Front-end Web Server
+Client authentication is an additional security measure available in TLS/SSL. It is not used by most HTTPS traffic on the public internet.
 
-### Differences Between Agent/Master and Standalone Puppet
+In normal SSL, a server must present a valid certificate (for which it possesses the corresponding private key) when clients connect to it. The client will validate the signature on that certificate to ensure that the server is who it claims to be.
 
+In client-authenticated SSL, the client must also present a valid certificate, which will be validated by the server to verify the client's identity. If it disbelieves the client's identity, or if the identity is valid but not authorized to access a given resource, the server can reject the connection.
+
+In Puppet's case, this means an agent node must have a signed certificate in order to access most of the services provided by the puppet master server. The list of service endpoints requiring client authentication can be configured in auth.conf; see below.
+
+### Puppet Master Web Servers and SSL Termination
+
+Since a puppet master provides services over HTTPS, it must run a web server, accept inbound connections, and terminate SSL.
+
+* Puppet can run a built-in web server based on Ruby's WEBrick library.
+    * In this case, the puppet master runs as a single Ruby process and terminates SSL itself, using the configured CA and puppet master certificates. (Note that the WEBrick server cannot be used in a production deployment, as it is unable to handle simultaneous connections.)
+* Alternately, the puppet master can be managed by a web server capable of running Rack applications. (For example: Apache using the Passenger module, or Unicorn with Nginx proxying requests to it.)
+    * In this case, a front-end web server terminates SSL and passes some information to the puppet master process. There may be multiple layers of proxying involved, and the verification information must persist through all of them.
+    * The front-end server must be configured to use the Puppet CA certificate to validate client identities, and to identify itself using the puppet master's certificate.
+    * After validating a request, the front-end will insert validation information into the HTTP request headers. (These modified headers should persist through any additional proxies being used.) Then, whatever Rack server is managing the puppet master will set special environment variables based on the request headers, following the common gateway interface (CGI) standard. The puppet master process will then read the environment variables to check whether the request was validated and to find the certname of the client.
+    * The default headers and variable names are `X-Client-DN` / `HTTP_X_CLIENT_DN` and `X-Client-Verify` / `HTTP_X_CLIENT_VERIFY`; these can be changed by configuring the front-end web server to insert information into different headers, translating those headers to CGI-style environment variable names, then using those variable names as the new values for the [`ssl_client_header`][ssl_client_header] and [`ssl_client_verify_header`][ssl_client_verify_header] settings in the puppet master's puppet.conf.
+
+### Differences Between Agent/Master and Standalone Puppet Apply
+
+In an agent/master deployment, a node being managed by Puppet will use HTTPS to do most or all of the following:
+
+* Download a node object (containing information like its environment) from a puppet master
+* Download plugins (like custom facts, types, and providers) from a puppet master
+* Upload its facts to a puppet master
+* Download a catalog from a puppet master
+* Upload its report to a puppet master
+
+By default, nodes running puppet apply to locally compile and apply their catalogs won't contact a puppet master for any of these things. However, a puppet apply node can be configured to:
+
+* Download plugins from a puppet master
+* Upload its facts to a PuppetDB server
+* Download exported resources from a PuppetDB server
+* Upload its catalog to a PuppetDB server
+
+All of these tasks would still use client-authenticated HTTPS, and the node would still require a signed certificate for them.
 
 Authentication
 -----
