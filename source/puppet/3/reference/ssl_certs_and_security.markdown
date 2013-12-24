@@ -217,8 +217,11 @@ Authorization
 
 The agent's identity determines which services it is authorized to access on the master. These permissions are controlled by the master's HTTP authorization config file, `auth.conf`.
 
-### The Puppet Master's Services
+### Puppet Master's HTTP Endpoints
 
+The puppet master provides several services over HTTPS. These network services make up the complete interface between the puppet master and any puppet agent nodes.
+
+Each service is presented as an HTTP "endpoint." This is a fuzzy term
 
 
 ### auth.conf
