@@ -1,0 +1,11 @@
+  	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  	<title>{{page.title}} — Documentation — Puppet Labs</title>
+  	<link rel="alternate" type="application/atom+xml" title="Puppet Labs Documentation Updates" href="https://github.com/puppetlabs/puppet-docs/commits/master.atom">
+    <link rel="alternate" type="application/atom+xml" title="Puppet Labs Blog Feed" href="http://puppetlabs.com/feed/atom/">
+    <link rel='index' title='Puppet Labs Documentation' href='http://docs.puppetlabs.com' />
+    <link rel='icon' href='/favicon.ico' />
+     {% capture description %}{% if page.description %}{{ page.description }}{% else %}{{ content | raw_content }}{% endif %}{% endcapture %}
+    <meta name="description" content="{{ description | strip_html | strip_newlines | condense_spaces | truncate:150 }}">
+        <!-- All in One SEO Pack 1.6.10.1 by Michael Torbert of Semper Fi Web Design[127,146] -->
+    	<meta name="keywords" content="Puppet, puppet labs, reductive labs, open source, system administrator, ruby, data center, automation, support" />
+    	<!-- /all in one seo pack -->
