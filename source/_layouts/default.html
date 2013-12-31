@@ -4,7 +4,7 @@
 {% include title_meta.html %}
 
 {% include google_analytics.html %}
-
+{% if page.swagger %} {% include swagger_requirements.html %} {% endif %}
 {% include default_css_js.html %}
 </head>
 

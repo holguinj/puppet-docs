@@ -1,5 +1,6 @@
 ---
-layout: swaggy
+layout: default
+swagger: /files/swagger/api/api-docs
 title: Puppet Forge API
 ---
 Puppet Forge API
