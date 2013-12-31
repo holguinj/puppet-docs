@@ -398,9 +398,6 @@
   	<style type="text/css">h1, h2, .btn { visibility : visible; }</style>
 
 
-<!-- BEGIN: MARKETO TRACKING -->
-<!-- Per Alanna, this must be directly before the closing body tag. -->
-    <script src="http://munchkin.marketo.net/munchkin.js" type="text/javascript"></script> <script>mktoMunchkin("307-QLA-991");</script>
- <!-- END: MARKETO TRACKING -->
+{% include marketo_tracking.html %}
 	</body>
 </html>
