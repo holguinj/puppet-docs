@@ -102,7 +102,7 @@ EOT
         custom_toc = %q{
 <nav id="page-nav" class="in-page">
 <ol class="toc" style="-webkit-column-width: 13em; -webkit-column-gap: 1.5em; -moz-column-width: 13em; -moz-column-gap: 1.5em; column-width: 13em; column-gap: 1.5em;">
-} + sorted_type_list.collect{|name| %q[<li class="toc-lv2"><a href="#] + name.gsub('_','') + %q[">] + name + %q[</a></li>] }.join("\n") + %q{
+} + sorted_type_list.collect{|name| %q[<li class="toc-lv2"><a href="#] + name.gsub('_','') + %q[ "onclick="_gaq.push(['_trackPageview' ,'/']);">] + name + %q[</a></li>] }.join("\n") + %q{
 </ol></nav>} + "\n\n"
         # Admission: I'm being lazy about generating the header IDs, since the type
         # names are already downcased, have no spaces, and the only character the ID
