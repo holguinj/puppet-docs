@@ -17,20 +17,60 @@ title: "SSL: Certificates and Security"
 [ssl_client_header]: todo
 [ssl_client_verify_header]: todo
 [http_endpoints]: /references/3.stable/developer/file.http_api_index.html
+[certname]: todo
+[dns_alt_names]: todo
+[replace_mangled_certificate]: todo
+[sign_alt_names]: todo
+[autosign]: todo
+[cadir]: todo
+[cacrl]: todo
+[cacert]: todo
+[cakey]: todo
+[capub]: todo
+[cert_inventory]: todo
+[caprivatedir]: todo
+[capass]: todo
+[csrdir]: todo
+[serial]: todo
+[signeddir]: todo
+[requestdir]: todo
+[hostcsr]: todo
+[certdir]: todo
+[hostcert]: todo
+[localcacert]: todo
+[hostcrl]: todo
+[privatedir]: todo
+[passfile]: todo
+[privatekeydir]: todo
+[hostprivkey]: todo
+[publickeydir]: todo
+[hostpubkey]: todo
+[authorization]: todo
+[auth_conf]: todo
+[rest_authconfig]: todo
+
+<!-- The following references are not used in the text:
+[http_endpoints]:
+-->
 
 Puppet uses TLS/SSL (often referred to as simply "SSL;" in the Puppet Labs docs, we use the terms interchangeably) to secure its HTTPS communications. It includes a built-in certificate authority and several systems that use the certificates once they have been issued. This page describes the latter.
 
 > Related Pages
 > -----
 >
-> This page focuses on background information about how Puppet's HTTPS and authentication/authorization systems work. If you are looking for information about _how_ to manage certificates and identity, you may need a different page.
+> This page is background information about Puppet's SSL infrastructure. It does not cover _how_ to manage certificates and identity.
 >
-> ### Basic Information
+> Depending on your needs, you may want one of these other pages:
 >
-> * [Signing and Managing Certificates with Puppet's CA][cert_sign] --- practical day-to-day instructions for managing certificates with Puppet's internal CA.
+> ### Practical Information
+>
+> * [Signing and Managing Certificates with Puppet's CA][cert_sign] --- day-to-day instructions for managing certificates with Puppet's internal CA.
+>
+> ### Introductory Background
+>
 > * [SSL Basics][ssl_basics] --- a brief description of public key crypto and X.509 certificates.
 >
-> ### Advanced Information
+> ### Advanced Practical Information
 >
 > * [Configuring Autosigning][autosigning] --- how to configure Puppet's CA to pre-approve new nodes.
 > * [CSR Attributes and Certificate Extensions][csr_attributes] --- how to embed arbitrary information in CSRs, usually to enable more secure autosigning.
@@ -73,7 +113,7 @@ X.509 certificates can have many kinds of data embedded, but Puppet only uses a 
 By default, Puppet is configured to require the following infrastructure:
 
 * All certificates in use across the Puppet deployment **must** be signed by the same certificate authority (CA). (However, if you are using an [external CA][external_ca], it is possible to use two CAs instead of one.)
-* All agent nodes **must** have a signed certificate. If they do not, they cannot request configuration data, although they can download the CA's credentials and request a certificate.
+* All agent nodes **must** have a signed certificate. If they do not, they cannot request configuration data, although they can download the CA's credentials and request a certificate. It isn't strictly necessary for each node certificate to be unique, but it is highly recommended.
 * Any puppet master server must have a signed certificate. Additionally, the hostname at which agent nodes contact it **must** be present in the certificate, either as the Subject CN value or as one of the Subject Alternative Name (DNS) values.
 
 Puppet has built-in CA tools and certificate request tools to fulfill these requirements; alternately, an external CA can fulfill them. For details on how to issue certificates, see [Signing and Managing Certificates with Puppet's CA][cert_sign].
@@ -82,7 +122,7 @@ Puppet has built-in CA tools and certificate request tools to fulfill these requ
 
 There is essentially no difference between an agent certificate and a puppet master certificate. They both must have CA:FALSE in their "X509v3 Basic Constraints" subsection, and they both may contain one or more alternate DNS names.
 
-This means that a puppet master certificate may also be used as a puppet agent certificate. A puppet master server may use puppet agent to fetch a catalog and configure itself; this entails contacting itself over HTTPS, presenting its certificate to itself to verify that it can provide services, presenting its certificate to itself to verify that it can access services, accepting the certificate both times, and carrying on as normal. By default, the puppet master would use the same copy of the certificate both times; however, it's also possible to configure the puppet master and puppet agent processes to use different `ssldir`s, by specifying different values for the setting in the `[agent]` and `[master]` config blocks. In this case, you would also need to specify distinct `certname` values, since only one certificate is permitted to use a given certname.
+This means that a puppet master certificate may also be used as a puppet agent certificate. A puppet master server may use puppet agent to fetch a catalog and configure itself; this entails contacting itself over HTTPS, presenting its certificate to itself to verify that it can provide services, presenting its certificate to itself to verify that it can access services, accepting the certificate both times, and carrying on as normal. By default, the puppet master would use the same copy of the certificate both times; however, it's also possible to configure the puppet master and puppet agent processes to use different `ssldir`s, by specifying different values for the setting in the `[agent]` and `[master]` config blocks. In this case, you would also need to specify distinct `certname` values in each block, since the CA will only permit one certificate to use a given certname.
 
 By contrast, the CA certificate can only be used to sign certificates; it cannot be used to request a catalog or to provide services as a puppet master.
 
