@@ -80,17 +80,34 @@ Puppet uses TLS/SSL (often referred to as simply "SSL;" in the Puppet Labs docs,
 
 
 
+Puppet uses HTTPS with X.509 SSL certificates for **encrypting communications** and for **authenticating nodes and services.** Other subsystems of Puppet can use the authentication provided by SSL to selectively **authorize requests.**
+
+In this version of Puppet, all certificate and encryption infrastructure is based on OpenSSL.
+
+Public Key Cryptography
+-----
+
+The term **public key cryptography** generally means a family of algorithms and practices for encrypting and verifying information.
+
+A complete description of how public key crypto works is far outside the scope of this page, but since it's foundational for any SSL-related system, we present below a broad overview of its properties.
+
+* In public key crypto, each participant possesses a _key pair,_ which consists of a _public key_ and a _private key._ These are both large, nearly-impossible-to-guess numbers, which are mathematically related to each other in a specific way.
+    * A private key can't be reverse-engineered from its corresponding public key. (Or at least, doing so isn't practical with current or foreseeable-future technology.)
+    * Any public key has one (and only one) corresponding private key, and vice-versa.
+* If you have the _public_ part of a given key pair, you can _encrypt_ a message so that it can only be decrypted by whoever possesses the corresponding _private_ key.
+* If you have the _private_ part of a given key pair, you can _digitally sign_ a message, which means anyone possessing the corresponding _public_ key can:
+    * Prove that whoever signed the message is (or was) actually in possession of that private key.
+    * Determine whether the message was altered after the signature was made.
+* Private keys must stay private. If a copy of a private key is stolen, all bets are off: the thief can decrypt and sign messages while posing as the rightful owner, until all other participants have been warned to stop using and trusting the corresponding public key.
+* To be useful for real-world purposes, a public key crypto scheme must be combined with some other system that links known keypairs to some form of _identity._ (Otherwise, they're just big annoying numbers.) This can be a local registry (think phone book), a central registry (think DNS), a signature-based system (think driver's licence), or some combination of them.
+
+
+### Names and Other Certificate Attributes
 
 Certificates
 -----
 
-Puppet uses X.509 SSL certificates for encrypting communications and for authenticating nodes and services.
-
-In this version of Puppet, all certificate and encryption infrastructure is based on OpenSSL.
-
-### Names and Other Certificate Attributes
-
-X.509 certificates can have many kinds of data embedded, but Puppet only uses a subset of this data.
+An X.509 certificate (referred to as simply "certificate" from here on) is a cryptographic identification document with the following useful properties:
 
 * **Certname:** Puppet uses the CN ("common name") portion of the Subject field as the unique identifier for each certificate. Within Puppet, this is often referred to as the "certname" to distinguish it from other forms of identity.
     * When a puppet agent node or puppet master is requesting a certificate, it uses its [`certname` setting][certname] (which defaults to the node's fully qualified domain name) as the requested Subject CN. If a node's `certname` setting is changed after it already has a certificate, it assumes that certificate belongs to someone else and will request a new certificate with the new name.
