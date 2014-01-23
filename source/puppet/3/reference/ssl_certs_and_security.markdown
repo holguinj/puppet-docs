@@ -18,6 +18,8 @@ title: "SSL: Certificates and Security"
 [sign_alt_names]: todo
 [autosign]: todo
 
+[wiki_pki]: http://en.wikipedia.org/wiki/Public_key_infrastructure
+
 [dns_alt_names]: /references/3.latest/configuration.html#dnsaltnames
 [ssl_client_header]: /references/3.latest/configuration.html#sslclientheader
 [ssl_client_verify_header]: /references/3.latest/configuration.html#sslclientverifyheader
@@ -84,48 +86,19 @@ Puppet uses HTTPS with X.509 SSL certificates for **encrypting communications** 
 
 In this version of Puppet, all certificate and encryption infrastructure is based on OpenSSL.
 
-Public Key Cryptography
------
-
-The term **public key cryptography** generally means a family of algorithms and practices for encrypting and verifying information.
-
-A complete description of how public key crypto works is far outside the scope of this page, but since it's foundational for any SSL-related system, we present below a broad overview of its properties.
-
-* In public key crypto, each participant possesses a _key pair,_ which consists of a _public key_ and a _private key._ These are both large, nearly-impossible-to-guess numbers, which are mathematically related to each other in a specific way.
-    * A private key can't be reverse-engineered from its corresponding public key. (Or at least, doing so isn't practical with current or foreseeable-future technology.)
-    * Any public key has one (and only one) corresponding private key, and vice-versa.
-* If you have the _public_ part of a given key pair, you can _encrypt_ a message so that it can only be decrypted by whoever possesses the corresponding _private_ key.
-* If you have the _private_ part of a given key pair, you can _digitally sign_ a message, which means anyone possessing the corresponding _public_ key can:
-    * Prove that whoever signed the message is (or was) actually in possession of that private key.
-    * Determine whether the message was altered after the signature was made.
-* Private keys must stay private. If a copy of a private key is stolen, all bets are off: the thief can decrypt and sign messages while posing as the rightful owner, until all other participants have been warned to stop using and trusting the corresponding public key.
-* To be useful for real-world purposes, a public key crypto scheme must be combined with some other system that links known keypairs to some form of _identity._ (Otherwise, they're just big annoying numbers.) This can be a local registry (think phone book), a central registry (think DNS), a signature-based system (think driver's licence), or some combination of them.
 
 
-### Names and Other Certificate Attributes
 
-Certificates
------
 
-An X.509 certificate (referred to as simply "certificate" from here on) is a cryptographic identification document with the following useful properties:
 
-* **Certname:** Puppet uses the CN ("common name") portion of the Subject field as the unique identifier for each certificate. Within Puppet, this is often referred to as the "certname" to distinguish it from other forms of identity.
-    * When a puppet agent node or puppet master is requesting a certificate, it uses its [`certname` setting][certname] (which defaults to the node's fully qualified domain name) as the requested Subject CN. If a node's `certname` setting is changed after it already has a certificate, it assumes that certificate belongs to someone else and will request a new certificate with the new name.
-    * Puppet does not use other portions of the Subject field (C, ST, O, OU, etc.) to distinguish nodes from each other. In certificates issued by Puppet's built-in CA, those fields are left blank and only the CN is specified.
-* **Alternate DNS names:** In the "X509v3 extensions" section of the certificate, the "X509v3 Subject Alternative Name" subsection may include any number of "DNS:" entries, each of which should be a hostname. These entries allow the bearer of the certificate to present itself under any of these host names when acting as a server, which enables multiple puppet masters to have distinctive certnames but provide services at a common generic hostname (like puppet.example.com) behind a load balancer or proxy.
-    * Alternate DNS names must be included in the original CSR, before the certificate is signed. When constructing a CSR, a Puppet node will use its [`dns_alt_names` setting][dns_alt_names] to decide which alternate names to request (if any). If a certificate is signed without the alternate names it needs, you must [replace it][replace_mangled_certificate].
-    * Since alternate names can allow a node to impersonate another node when acting as a server, they are treated specially by Puppet's CA tools. In the Signing Certificates reference, see the section on [signing certificates with DNS alt names][sign_alt_names] for more detail.
-    * In general, acting as a server means being a puppet master, but see also the section on [puppet agent's web server][agent_web_server] below.
-* **Validity:** Each certificate has a period for which it is valid, with a start date and an end date. Outside that period, any agent or master presented with that certificate will consider it invalid and reject the connection. Expired certificates will have to be [replaced][replace_expired_certificate].
-    * The CA sets the validity period when it signs a new certificate, using the value of its `ca_ttl` setting (defaults to five years).
-* **Public key:** The public key embedded in the certificate is used for encrypting communications and verifying that the bearer of the certificate possesses the corresponding private key.
-* **Signature:** The CA's signature proves that the bearer of this certificate is authorized to use Puppet services and go by the certname or any alternate DNS names in that certificate.
-* **Constraints and Key Usage:** In the "X509v3 extensions" section of the certificate, there are several subsections that determine how the certificate can be used:
-    * In the "X509v3 Basic Constraints" subsection, the "CA" entry determines whether the certificate can sign other certificates. Every Puppet certificate except the CA certificate should have `CA:FALSE` set. The CA certificate should have `CA:TRUE`.
-    * In the "X509v3 Key Usage" subsection, the CA certificate should have the "Certificate Sign" and "CRL Sign" abilities, and no others. All other certificates should have the "Digital Signature" and "Key Encipherment" abilities, and no others.
-    * The "X509v3 Extended Key Usage" subsection should be absent from the CA certificate. In all other certificates, it should include "TLS Web Server Authentication" and "TLS Web Client Authentication," and no other abilities.
-* **Arbitrary extensions:** These are only used in a limited fashion today. See the page on [CSR attributes and cert extensions][attributes_and_extensions] for details.
 
+
+
+
+
+
+
+---------------
 
 ### Default PKI Requirements
 
@@ -161,36 +134,6 @@ A master that accepts traffic on behalf of the Puppet CA is referred to as a "CA
 This refers only to the services the puppet master process provides over the network. In addition, a user with shell access and superuser privileges on the puppet master server can use the `puppet cert` command line tool to view certificate information and sign/revoke certificates. For details, see [Signing and Managing Certificates][cert_sign].
 
 
-### The `ssldir` and Certificate Locations
-
-All certificates, private keys, CSRs, and other crypto documents are stored on disk in PEM format in Puppet's "ssldir," whose location can be configured with the [`ssldir` setting][ssldir].  The permissions mode of the ssldir should be 0771, and it and every file it contains should be owned by the user Puppet runs as (i.e., root or Administrator on puppet agent nodes and defaulting to `puppet` on a puppet master server).
-
-The layout of the ssldir is as follows:
-
-* `ca` _(directory)_ --- Contains certificate authority (CA) infrastructure. This directory must only exist on the CA puppet master server, and only if you are using Puppet's built-in CA. Mode: 0770. Setting: [`cadir`][cadir].
-    * `ca_crl.pem` --- The master copy of the certificate revocation list (CRL) managed by the CA. Mode: 0664. Setting: [`cacrl`][cacrl].
-    * `ca_crt.pem` --- The CA's self-signed certificate. Mode: 0660. Setting: [`cacert`][cacert].
-    * `ca_key.pem` --- The CA's private key. Tied for most security-critical file in the entire Puppet certificate infrastructure. Mode: 0660. Setting: [`cakey`][cakey].
-    * `ca_pub.pem` --- The CA's public key. Mode: Not specified. Setting: [`capub`][capub].
-    * `inventory.txt` --- A list of all certificates the CA has signed, along with their serial numbers and validity periods. Mode: 0644. Setting: [`cert_inventory`][cert_inventory].
-    * `private` _(directory)_ --- Contains only one file. Mode: 0770. Setting: [`caprivatedir`][caprivatedir].
-        * `ca.pass` --- The password to the CA's private key. Tied for most security-critical file in the entire Puppet certificate infrastructure. Mode: 0660. Setting: [`capass`][capass].
-    * `requests` _(directory)_ --- Contains CSRs that were received but have not yet been signed. The CA deletes CSRs from this directory after signing them. Mode: Not specified. Setting: [`csrdir`][csrdir].
-    * `serial` --- A file containing the serial number for the next certificate the CA will sign. Mode: 0644. Setting: [`serial`][serial].
-    * `signed` _(directory)_ --- Contains certificates the CA has signed. Mode: 0770. Setting: [`signeddir`][signeddir].
-* `certificate_requests` _(directory)_ --- Contains any CSRs generated by this node in preparation for submission to the CA. CSRs persist in this directory even after they have been submitted and signed. Mode: Not specified. Setting: [`requestdir`][requestdir].
-    * `<certname>.pem` --- This node's CSR. Mode: 0644. Setting: [`hostcsr`][hostcsr].
-* `certs` _(directory)_ --- Contains any signed certificates present on this node. This includes the node's own certificate, as well as a copy of the CA certificate (for use when validating certificates presented by other nodes). Mode: Not specified. Setting: [`certdir`][certdir].
-    * `<certname>.pem` --- This node's certificate. Mode: 0644. Setting: [`hostcert`][hostcert].
-    * `ca.pem` --- A local copy of the CA certificate. Mode: 0644. Setting: [`localcacert`][localcacert].
-* `crl.pem` --- A copy of the certificate revocation list (CRL) retrieved from the CA, for use by puppet agent or puppet master. Mode: 0644. Setting: [`hostcrl`][hostcrl].
-* `private` _(directory)_ --- Usually does not contain any files. Mode: 0750. Setting: [`privatedir`][privatedir].
-    * `password` --- The password to a node's private key. Usually not present. The conditions in which this file would exist are not defined. Mode: 0640. Setting: [`passfile`][passfile].
-* `private_keys` _(directory)_ --- Contains any private keys present on this node. This should generally only include the node's own private key, although on the CA it may also contain any private keys created by the `puppet cert generate` command. It will never contain the private key for the CA certificate. Mode: 0750. Setting: [`privatekeydir`][privatekeydir].
-    * `<certname>.pem` --- This node's private key. Mode: 0600. Setting: [`hostprivkey`][hostprivkey].
-* `public_keys` _(directory)_ --- Contains any public keys generated by this node in preparation for generating a CSR. Mode: Not specified. Setting: [`publickeydir`][publickeydir].
-    * `<certname>.pem` --- This node's public key. Mode: 0644. Setting: [`hostpubkey`][hostpubkey].
-
 
 HTTPS
 -----
@@ -198,7 +141,7 @@ HTTPS
 Network communication between agent nodes and puppet masters happens over industry-standard [HTTPS][https_wiki], which wraps the HTTP protocol with TLS/SSL.
 
 * Most of Puppet's traffic also requires client authentication, so it behaves somewhat differently from most HTTPS on the public internet.
-* Puppet's traffic is usually on port 8140 (configurable with the [`masterport` setting][masterport]) instead of the default HTTPS port of 443.
+* Puppet's traffic is usually on port 8140 (configurable with the [`masterport` setting][masterport]) instead of the default web HTTPS port of 443.
 
 ### Encryption
 
