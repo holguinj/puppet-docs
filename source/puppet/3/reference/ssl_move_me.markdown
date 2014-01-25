@@ -8,7 +8,7 @@ Puppet's network communications and security are all based on HTTPS, which secur
 
 These tools and protocols can sometimes present a steep learning curve for new Puppet users. This page provides background knowledge about how SSL and certificates work, and is aimed at giving new Puppet users enough fluency with these concepts to read and understand the rest of the SSL documentation on this site. Once you are familiar with the basic concepts, other documentation on this site has practical instructions about how to manage certificates and security. See the [list of resources][ssl_links_inpage] at the bottom of this page for details.
 
-Note that this background information is vastly simplified and glosses over any number of implementation complexities. If you're interested in learning more, it should provide enough context and vocabulary to research these topics in more depth. ([The Wikipedia page on PKI][wiki_pki] may be a good starting place; after that, we recommend hitting the library or your local technical book store.)
+Note that this background information is vastly simplified and glosses over any number of implementation complexities. If you're interested in learning more, it should provide enough context and vocabulary to research these topics in more depth. (The Wikipedia pages on [PKI][wiki_pki] and [TLS/SSL][wiki_tls] may be a good starting place; after that, we recommend hitting the library or your local technical book store.)
 
 
 Public Key Cryptography
@@ -110,7 +110,7 @@ TLS is a protocol that uses an X.509 PKI to create secure channels of communicat
 
 They both refer to essentially the same thing. Informally, many people (including us at Puppet Labs) often just say "SSL" to refer to any combination of TLS and SSL, mostly because old habits die hard.
 
-Most tools can use multiple versions of the protocol, and the combination of versions they support will often cross the arbitrary TLS/SSL boundary. (Usually SSL 3.0 and at least TLS 1.0 and 1.1.) The exact protocol you'll be using at any given moment depends on the configuration of every tool that might interact with the system.
+Most tools can use multiple versions of the protocol, and the combination of versions they support will often cross the arbitrary TLS/SSL boundary. (Usually something like SSL 3.0, TLS 1.0, and 1.1.) Since clients and servers can negotiate versions on the fly, the exact protocol you'll be using at any given moment depends on the configuration of every tool that might interact with the system.
 
 ### Starting an SSL Connection
 
@@ -123,7 +123,7 @@ After a client starts the process, an SSL connection involves the following proc
     * The client software validates that certificate, based on its knowledge of which CAs exist and are trustworthy. If it doesn't validate, the client bails.
 * **Optionally,** the client can present a certificate of its own to the server, along with proof that it possesses the corresponding private key.
     * This only happens if the server explicitly requests "client authentication." Not all SSL connections require this; for example, most HTTPS sites on the web don't require client authentication.
-* The client sends a temporary "session" encryption key to the server, encrypted so that only the owner of the server certificate can read it.
+* The client sends a temporary "session" key to the server, encrypted so that only the owner of the server certificate can read it.
 * Both client and server use that session key to encrypt all subsequent traffic in the connection.
 
 ### What an SSL Connection Gets You
@@ -137,9 +137,18 @@ After the connection starts, the two parties have the following tools and extra 
     * Web SSL certificates contain a list of domain names that are allowed to present that certificate. The web browser automatically checks for the domain name it contacted in that list. If it isn't included, the browser can refuse to let the user continue.
     * Certificates also list the name of the organization that was issued the certificate, and web browsers present that name to the user. (Usually behind a little padlock icon.) If the user checks that organization name and doesn't believe that it matches the rightful operator of the website they think they're visiting, they may choose to distrust and bail.
     * A website may ask for sensitive information that the user is only willing to share with certain trusted parties. If the user checks the organization name in the certificate and doesn't wish to share that information with that organization, they may decide not to provide it.
-* If client authorization was requested and accepted, the server also has metadata about the client. In a reversal of the last point, the server can use that metadata to authorize the client. For example, it may apply extra protection to certain resources and decide that only clients with certain highly-trusted certificates can access them. This could be done by maintaining a list of allowed client names, or by looking for a certain token that was embedded in the client's certificate at the time that it was signed.
+* If client authentication was requested and accepted, the server also has metadata about the client. In a reversal of the last point, the server can use that metadata to authorize the client. For example, it may protect certain resources by only allowing certain clients to access them. This could be done by maintaining a list of allowed client names, or by looking for some token that was embedded in the client's certificate when it was signed.
 
 
 HTTPS
 -----
 
+SSL is a relatively generic protocol, with no real opinion about the kind of data that is sent across it. This means it is rarely used directly; instead, it's usually used to wrap a more specific protocol, like HTTP or SMTP.
+
+HTTPS is a method for wrapping the common HTTP protocol in SSL. The entire protocol is wrapped, including headers; this means that even URLs, parameters, and POST data will be encrypted.
+
+On the web, the usual convention is to use port 443 for HTTPS. (Puppet generally uses port 8140, since its traffic doesn't really resemble web traffic.)
+
+### Terminating SSL, and Information in Headers
+
+Most applications that use HTTPS for communication are split into layers. Request handling will be dedicated to a dedicated web server
