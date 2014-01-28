@@ -202,7 +202,7 @@ Large server-side HTTPS applications often need to be split into multiple semi-i
 
 A single component that handles SSL in a service-oriented-architecture is called an _SSL terminating proxy._ SSL proxies work under basically the same requirements as the SSL component of a purely local application stack --- they must validate certificates and provide a secure channel, and they may need to publish connection and certificate information for use by other components of the stack. They also introduce one additional requirement: the network between the proxy and the application server must be very secure, as sensitive information will be passing along it in cleartext.
 
-[ssl_terminating_proxy]: ./ssl_terminating_proxy.jpg
+[ssl_terminating_proxy]: ./images/ssl_terminating_proxy.jpg
 
 ![A drawing of an SSL terminating proxy removing SSL and sending a second unencrypted HTTP request with certificate data embedded in the headers.][ssl_terminating_proxy]
 
