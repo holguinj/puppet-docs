@@ -7,7 +7,7 @@ title: "Background Reference: SSL and Related Topics"
 [wiki_pki]: http://en.wikipedia.org/wiki/Public_key_infrastructure
 [wiki_tls]: http://en.wikipedia.org/wiki/Transport_Layer_Security
 
-> **Note:** If you understand basic SSL-related concepts and want practical info on managing certificates, see [this list of SSL-related documentation][ssl_links_inpage].
+> **Note:** If you already understand basic SSL-related concepts and want practical info on managing certificates, see [this list of SSL-related documentation][ssl_links_inpage].
 
 Puppet's network communications and security are all based on HTTPS, which secures traffic using X.509 certificates. It includes its own CA tools to provide PKI functionality to the whole deployment, although an existing CA can also be used.
 
@@ -17,6 +17,8 @@ These tools and protocols can sometimes present a steep learning curve for new P
 
 Table of Contents
 -----
+
+We recommend reading these articles in order, as each one lays foundations for the next.
 
 [**What is Public Key Cryptography?**](./public_key.html)
 

@@ -12,7 +12,7 @@ title: "Background Reference: What are Certificates and PKI?"
 [other_ssl_docs]: ./index.html#other-ssl-related-documentation
 
 
-> **Note:** If you understand basic SSL-related concepts and want practical info on managing certificates, see [this list of SSL-related documentation][other_ssl_docs].
+> **Note:** If you already understand basic SSL-related concepts and want practical info on managing certificates, see [this list of SSL-related documentation][other_ssl_docs].
 >
 > This article is [part of a series][index] of background references about SSL. We provide it to help new users understand the basic concepts and workflows that Puppet's security systems are constructed from.
 >
@@ -103,6 +103,7 @@ The Puppet CA consists of the following components:
 * The CA's on-disk files, which include the CA certificate, the CA private key, any stored CSRs, an inventory of previously signed certificates (as well as copies of them), and the CRL.
 * Command-line tools for viewing pending CSRs and signing, examining, and revoking certificates.
 * Additional HTTPS services that allow certificates to be signed and revoked. (Since these can be dangerous, they are configured to be inaccessible by default.)
+* In Puppet Enterprise, the PE console also includes a tool for signing certificate requests.
 
 
 

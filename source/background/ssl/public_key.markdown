@@ -7,7 +7,7 @@ title: "Background Reference: What is Public Key Cryptography?"
 [index]: ./index.html
 [other_ssl_docs]: ./index.html#other-ssl-related-documentation
 
-> **Note:** If you understand basic SSL-related concepts and want practical info on managing certificates, see [this list of SSL-related documentation][other_ssl_docs].
+> **Note:** If you already understand basic SSL-related concepts and want practical info on managing certificates, see [this list of SSL-related documentation][other_ssl_docs].
 >
 > This article is [part of a series][index] of background references about SSL. We provide it to help new users understand the basic concepts and workflows that Puppet's security systems are constructed from.
 >
