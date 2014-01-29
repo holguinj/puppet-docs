@@ -17,7 +17,7 @@ title: "Background Reference: What is TLS/SSL?"
 > * The concepts in this article are necessary for understanding the next article in the series, [What is HTTPS][https].
 
 
-TLS is a protocol that uses an X.509 PKI to create secure and authenticated channels of network communication. SSL is an older version of that same protocol, which is still in widespread use.
+TLS ("transport layer security") is a protocol that uses an X.509 PKI to create secure and authenticated channels of network communication. SSL ("secure socket layer") is an older version of that same protocol, which is still in widespread use.
 
 > A Note on Names
 > -----
