@@ -116,7 +116,7 @@ The Puppet CA consists of the following components:
 >
 > * **Subvert the CA's owner.** If you can coerce or manipulate the person or organization behind the CA, you can easily obtain fraudulent certificates that are indistinguishable from legitimate ones. These can be used to impersonate other participants in a man-in-the-middle attack, or to provide legitimacy for some other shenanigans. The only way for other participants to recover is to burn that CA permanently, which will have hugely disruptive effects; any participants with certificates from that CA will need to become re-certified under a new CA.
 > * **Subvert the CA's credentials.** If you can steal the CA's private key or get temporary access to it, you can issue your own forged certificates and do basically the same thing as above. Since the CA won't know about these certificates, you may end up with duplicated serial numbers, but these are only a problem if someone who has seen your forged certs in the wild can correlate them with the set of all legit certificates. (Basically: if the CA gets wind of it, the gig is up.) Duped serial numbers can also make it difficult for the CA to effectively revoke your forged certs. The only way for other participants to recover is to stop trusting that CA's certificate permanently and either replace it or stop trusting the entity behind the CA. All existing participants will need to be re-certified with the new CA credentials.
-> * **Trick the CA.** If the CA is lax in its background checks, a rogue participant may submit fraudulent metadata (for example, using the name of an organization they don't actually represent) and have it signed into a legit certificate. This may allow them to impersonate other actors. To recover, the CA must revoke that certificate and all participants must be using good CRL hygiene when validating certificates.
+> * **Trick the CA.** If the CA is lax in its background checks, a rogue participant may submit fraudulent metadata (for example, using the name of an organization they don't actually represent) and have it signed into a legit certificate. This may allow them to impersonate other actors or exercise permissions they shouldn't have. To recover, the CA must revoke that certificate and all participants must be using good CRL hygiene when validating certificates.
 >     * (A fun example was Puppet's [CVE-2011-3872](http://puppetlabs.com/security/cve/cve-2011-3872), where the CA could be configured to trick _itself_ into silently adding forged metadata to agent certs.)
 > * **Subvert participants' credentials.** If you can get access to a participant's private key, you can impersonate them at will. To recover, the CA will need to revoke their certificate and they will need to get re-certified.
 > * **Subvert a participant's list of trusted CAs.** If you can insert an evil CA certificate into a user's collection of CA certs, they will often trust certificates issued by that rogue CA. (This could be done by, e.g., redirecting a user to a doctored browser executable with bogus root CAs inserted. It could also be done with a trojan or other means of partial control over the user's computer.) To recover, the user would need to be keeping track of their trusted CAs, and would need to remove the evil one and patch whatever vulnerability allowed it to be placed there.
@@ -125,6 +125,19 @@ The Puppet CA consists of the following components:
 >
 > In short: protect your private keys, make sure you actually trust the CA (in intentions _and_ competence), stay up to date on protocol exploits, and above all keep an eye on the unsecured portions of your system.
 
+
+Summary
+-----
+
+This article was longer than the others in this series, so a recap is in order:
+
+* Trust originates outside the PKI, and is a prerequisite for joining it: if you're participating, you've agreed to trust a specific person or institution to diligently check other participants' credentials. Sometimes this agreement is active; other times, it's tacit, like when you install a web browser.
+* A certificate has three parts: public key, metadata, and signature from the CA. Without all three, it's not a certificate.
+* The CA issues all certificates. If it's a certificate at all, the CA has seen it and approved it.
+* Because the CA approves all certificate metadata, participants don't have to keep a list of all the public keys they'll need to know about; instead, they can just trust any valid certificate they are shown.
+* Because certs include public keys, only their rightful owner can present them as ID. A stolen cert is inert without a stolen private key.
+* The CA can also revoke certificates, but that only works if everybody regularly checks the list of revoked certs  (CRL).
+* Puppet has built-in tools to make managing a CA easier. These are covered in other documentation.
 
 
 Next in This Series
