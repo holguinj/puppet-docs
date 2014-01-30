@@ -48,7 +48,7 @@ After a client starts the process, an SSL connection involves the following proc
 * **Optionally,** the client can present a certificate of its own to the server. The client will also sign a piece of server-provided data to prove that it possesses the corresponding private key. The server will validate the client certificate before continuing.
     * This only happens if the server explicitly requests **client authentication.** Most HTTPS sites on the web don't require client authentication. Puppet, however, does (for some services).
 * The client sends a temporary "session" key to the server, encrypted so that only the owner of the server certificate can read it.
-* Both client and server use that session key to encrypt all subsequent traffic in the connection.
+* Both client and server use that session key to encrypt all subsequent traffic in the connection, using a symmetric cypher. (Using a public key cypher wouldn't be appropriate, since the client doesn't always provide a public key.)
 
 Specific Advantages of an SSL Connection
 -----

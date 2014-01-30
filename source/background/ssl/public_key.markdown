@@ -17,9 +17,7 @@ title: "Background Reference: What is Public Key Cryptography?"
 
 **Public key cryptography** is a family of algorithms and practices for encrypting and verifying information.
 
-The fundamental principle of public key crypto is that two participants can securely exchange (and verify) information _without sharing any secret key ahead of time._
-
-In **symmetric cryptography,** both participants must each have a copy of a shared secret key, and anyone possessing that secret can listen in. In public key crypto, participants never share their secret keys.
+The fundamental principle of public key crypto is that two participants can securely exchange (and verify) information _without sharing any secret key ahead of time._ This allows novel applications that would be impossible with _symmetric cryptography,_ where all participants must have a copy of a shared secret key.
 
 Key Pairs
 -----
