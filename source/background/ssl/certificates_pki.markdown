@@ -10,7 +10,7 @@ title: "Background Reference: What are Certificates and PKI?"
 [x509]: todo
 [certificate_anatomy]: todo
 [other_ssl_docs]: ./index.html#other-ssl-related-documentation
-
+[file_extensions]: http://en.wikipedia.org/wiki/X.509#Certificate_filename_extensions
 
 > **Note:** If you already understand basic SSL-related concepts and want practical info on managing certificates, see [this list of SSL-related documentation][other_ssl_docs].
 >
@@ -42,6 +42,8 @@ These three parts work together to form a useful unit of trust:
 ### Certificate Storage
 
 Certificates are usually stored in some encoded format. The most common format is PEM (privacy-enhanced mail), but certs may also be stored in archives such as Java keystores. These encoded formats are not human-readable, and need to be dumped into a different format to be inspected by users.
+
+A list of the most common file formats is available at [Wikipedia's page about the X.509 standard.][file_extensions]
 
 (Puppet stores certificates in PEM format, and the CA tools include a `puppet cert print` command for dumping certificates to the terminal.)
 
