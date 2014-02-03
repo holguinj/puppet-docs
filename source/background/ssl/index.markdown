@@ -22,7 +22,7 @@ We recommend reading these articles in order, as each one lays foundations for t
 
 [**What is Public Key Cryptography?**](./public_key.html)
 
-Public key crypto is a family of tools for encrypting and verifying information. This brief article explains why it's useful.
+Public key crypto is a family of algorithms and practices for encrypting and verifying information. This brief article explains why it's useful.
 
 [**What are Certificates and PKI?**](./certificates_pki.html)
 
