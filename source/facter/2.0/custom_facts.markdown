@@ -6,7 +6,7 @@ title: "Facter 2.0: Custom Facts"
 Custom Facts
 ============
 
-Extend facter by writing your own custom facts to provide information to Puppet.
+Extend Facter by writing your own custom facts to provide information to Puppet.
 
 * * *
 
@@ -32,17 +32,17 @@ facts to the client.
 
 ## An Example
 
-Let's say we need to get the output of uname -i to single out a
-specific type of workstation. To do these we create a fact. We
+Let's say we need to get the output of `uname -i` to single out a
+specific type of workstation. To do this we create a fact. We
 start by giving the fact a name, in this case, `hardware_platform`,
 and create our new fact in a file, `hardware_platform.rb`, on the
 Puppet master server:
 
     # hardware_platform.rb
 
-    Facter.add("hardware_platform") do
+    Facter.add(:hardware_platform) do
       setcode do
-        Facter::Util::Resolution.exec('/bin/uname -i')
+        Facter::Core::Execution.exec('/bin/uname -i')
       end
     end
 
@@ -55,21 +55,22 @@ The best place to get ideas about how to write your own custom facts is to look 
 
 ## Using other facts
 
-You can write a fact which uses other facts by accessing
-Facter.value("somefact") or simply Facter.somefact. The former will
-return nil for unknown facts, the latter will raise an exception.
+You can get the current value for any fact by calling `Facter.value(:somefact)`. That way, you can write a new fact
+using information from another fact or facts. If the named fact is unresolved, `Facter.value` will return `nil`, but
+if the fact can't be found at all, it will throw an error. 
+
 An example:
 
-    Facter.add("osfamily") do
+    Facter.add(:osfamily) do
       setcode do
-        distid = Facter.value('lsbdistid')
+        distid = Facter.value(:lsbdistid)
         case distid
-        when /RedHatEnterprise|CentOS|Fedora/
-          "redhat"
-        when "ubuntu"
-          "debian"
-        else
-          distid
+          when /RedHatEnterprise|CentOS|Fedora/
+            "redhat"
+          when "ubuntu"
+            "debian"
+          else
+            distid
         end
       end
     end
@@ -91,7 +92,7 @@ subdirectories named 'facter', and will load all ruby files in those directories
 If you had some directory in your $LOAD\_PATH like ~/lib/ruby, set up like
 this:
 
-    {~/lib/ruby}
+    #~/lib/ruby
     └── facter
         ├── rackspace.rb
         ├── system_load.rb
@@ -115,8 +116,8 @@ This allows you to do something like this:
 
 Facter can also easily load fact files distributed using pluginsync. Running
 `facter -p` will load all the facts that have been distributed via pluginsync,
-so if you're using a lot of custom facts inside puppet, you can easily use
-these facts with standalone facter.
+so if you're using a lot of custom facts inside Puppet, you can easily use
+these facts with standalone Facter.
 
 Custom facts can be distributed to clients using the [Plugins In Modules](/guides/plugins_in_modules.html) method.
 
@@ -126,22 +127,36 @@ Facts have a few properties that you can use to customize how facts are evaluate
 
 ### Confining Facts
 
-One of the more commonly used properties is the `confine` statement, which
-restricts the fact to only run on systems that matches another given fact.
-
-An example of the confine statement would be something like the following:
+One of the more commonly used properties is the `confine` statement, which restricts the systems on which a fact
+or resolution will run. The simplest type of `confine` statement restricts a fact based on the value of another fact,
+as in the following example:
 
     Facter.add(:powerstates) do
       confine :kernel => "Linux"
       setcode do
-        Facter::Util::Resolution.exec('cat /sys/power/states')
+        Facter::Core::Execution.exec('cat /sys/power/states')
       end
     end
 
-This fact uses sysfs on linux to get a list of the power states that are
-available on the given system. Since this is only available on Linux systems,
+This fact uses sysfs on Linux to get a list of the power states that are
+available on the given system. Since sysfs is only available on Linux systems,
 we use the confine statement to ensure that this fact isn't needlessly run on
 systems that don't support this type of enumeration.
+
+You can also pass an arbitrary expression or block to `confine`, and Facter will
+only run that fact or resolution if the expression returns a truthy value (essentially
+anything other than `false` or `nil`). The following example is very similar to the first,
+except that it checks for the existence of the '/sys' directory rather than the value of the
+`:kernel` fact.
+
+    Facter.add(:powerstates) do
+    	confine do
+    		File.exists? '/sys'
+    	end
+      setcode do
+        Facter::Core::Execution.exec('cat /sys/power/states')
+      end
+    end
 
 ### Fact precedence
 
