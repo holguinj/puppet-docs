@@ -98,6 +98,7 @@ Facter 2.0 introduced **structured facts**, which can take the form of hashes or
 Facter.add(:interfaces_array) do
   setcode do
    interfaces = Facter.value(:interfaces)
+   # the 'interfaces' fact returns a single comma-delimited string, e.g., "lo0,eth0,eth1"
    interfaces_array = interfaces.split(',')
    interfaces_array
   end
@@ -133,7 +134,7 @@ using concatenation, summation, or any other method that you can express in Ruby
 ### Example: building a structured fact progressively
 
 {% highlight ruby %}
-Facter.add(:myfact, :type => :aggregate) do
+Facter.add(:networking, :type => :aggregate) do
 
   confine :kernel => "Linux"
 
@@ -172,10 +173,12 @@ end
 Facter.add(:total_free_memory_mb, :type => :aggregate) do
   chunk(:physical_memory) do
     Facter.value(:memoryfree_mb).to_i
+    # The 'memoryfree_mb' fact returns the number of megabytes of free memory as a string.
   end
 
   chunk(:virtual_memory) do
     Facter.value(:swapfree_mb).to_i
+    # The 'swapfree_mb' fact returns the number of megabytes of free swap as a string.
   end
   
   aggregate do |chunks|
@@ -212,4 +215,4 @@ Aggregate resolutions have two key differences compared to simple resolutions: t
   5. An optional `aggregate` block
      * if absent, Facter will merge hashes with hashes or arrays with arrays
      * if you want to merge the chunks in any other way, you'll need to specify it here
-
+     * the `chunks` object contains the return values for all of the chunks in the resolution
