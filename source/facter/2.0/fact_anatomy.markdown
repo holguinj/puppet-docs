@@ -87,6 +87,7 @@ Simple facts are typically made up of the following parts:
      * can take either a string or a block
      * if given a string, Facter will execute it as a shell command and the output will be the value of the fact
      * if given a block, the block's return value will be the value of the fact
+     * to execute shell commands within a `setcode` block, use the `Facter::Core::Execution.exec` function
      * if multiple `setcode` statements are evaluated for a single fact, Facter will only retain the newest value
 
 ## Structured Facts
