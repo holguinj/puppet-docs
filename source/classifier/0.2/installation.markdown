@@ -27,13 +27,15 @@ Feel free to add parameters to the `postgresql::server` declaration, although yo
 You're also going to need to create a database and a role for the Classifier to use, which you can do with another bit of puppet code. You'll want to change `kla$$ifier` to something more secure:
 
 {% highlight ruby %}
+  $classifier_password = 'kla$$ifier'  #change this
+
   postgresql::server::role { 'classifier':
-    password_hash => postgresql_password('classifier', 'kla$$ifier'),
+    password_hash => postgresql_password('classifier', $classifier_password),
   } ->
   
   postgresql::server::db { 'classifier':
-    user => 'classifier',
-    password => postgresql_password('classifier', 'kla$$ifier'),
+    user     => 'classifier',
+    password => postgresql_password('classifier', $classifier_password),
   }
 {% endhighlight %}
 
