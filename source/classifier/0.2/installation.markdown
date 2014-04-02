@@ -5,13 +5,10 @@ layout: default
 
 # Classifier Installation and Setup
 
-## Overview
-Before you can get the Classifier up and running, you'll need to install Puppet 3.5.0 or greater and PostgreSQL 9.2 or greater. Note that, like the Classifier itself, Puppet 3.5.0 is still pre-release software and is not yet recommended for use in production.
-
-The Classifier service doesn't need to be run on the same node as the puppet master, but it does need to run on a node that's managed by the puppet master and has the appropriate certificates present.
+This guide covers installing and configuring the Classifier (including PostgreSQL) and configuring the puppet master to use it for classification. Before you start, you should have a Puppet 3.5.0 master up and running. Note that, like the Classifier itself, Puppet 3.5.0 is still pre-release software and is not yet recommended for use in production. The Classifier service doesn't need to be run on the same node as the puppet master, but it does need to run on a node that's managed by the puppet master, since it will need copies of puppet's certificate files.
 
 ## Install and Configure PostgreSQL
-We recommend installing PostgreSQL by using the [puppetlabs-postgresql module](https://forge.puppetlabs.com/puppetlabs/postgresql). If you already have a working PostgreSQL server that's managed by puppet, just add the parts that are missing to the relevant manifests. Otherwise, install the module with `sudo puppet module install puppetlabs-postgresql` and apply the following puppet code:
+We recommend installing PostgreSQL by using the [puppetlabs-postgresql module](https://forge.puppetlabs.com/puppetlabs/postgresql). If you already have a working PostgreSQL server that's managed by puppet, just incorporate the parts that are missing to the relevant manifests. Otherwise, install the module with `sudo puppet module install puppetlabs-postgresql` and apply the following puppet code to install the PostgreSQL server:
 
 {% highlight ruby %}
    class {'postgresql::globals':
@@ -111,14 +108,12 @@ server: classifier_hostname #must match that node's certificate
 port: 1262
 {% endhighlight %}
 
-Next, you'll need to edit puppet's `auth.conf` file (also in confdir) to allow the Classifier to retrieve data from the master. Add the following block anywhere in the file:
+Next, you'll need to edit puppet's `auth.conf` file (also in confdir) to allow the Classifier to request data from the master. Add the following block anywhere in the file:
 
-{% highlight ini %}
-path /resource_type
-method find, search
-auth yes
-allow *
-{% endhighlight %}
+    path /resource_type
+    method find, search
+    auth yes
+    allow *
 
 Finally, run `sudo puppet config set node_terminus classifier` to make the master rely on the Classifier for classification, then restart the `puppetmaster` service. Note that from this point on, the puppet master will refuse to compile any catalogs if it can't reach the Classifier. If you need to revert this setting to default, use `sudo puppet config set node_terminus plain`.
 
