@@ -11,12 +11,12 @@ This guide covers installing and configuring the Classifier (including PostgreSQ
 We recommend installing PostgreSQL by using the [puppetlabs-postgresql module](https://forge.puppetlabs.com/puppetlabs/postgresql). If you already have a working PostgreSQL server that's managed by puppet, just incorporate the parts that are missing to the relevant manifests. Otherwise, install the module with `sudo puppet module install puppetlabs-postgresql` and apply the following puppet code to install the PostgreSQL server:
 
 {% highlight ruby %}
-   class {'postgresql::globals':
-      manage_package_repo => true,
-      version             => '9.2',
-    } ->
+class { 'postgresql::globals':
+   manage_package_repo => true,
+   version             => '9.2',
+ } ->
 
-   class {'postgresql::server': } ->
+class { 'postgresql::server': }
 {% endhighlight %}
 
 Feel free to add parameters to the `postgresql::server` declaration, although you should be aware that changing certain settings (such as the address and port of the postgresql server) may make it difficult or impossible for the Classifier to connect.
@@ -24,29 +24,30 @@ Feel free to add parameters to the `postgresql::server` declaration, although yo
 You're also going to need to create a database and a role for the Classifier to use, which you can do with another bit of puppet code. You'll want to change `kla$$ifier` to something more secure:
 
 {% highlight ruby %}
-  $classifier_password = 'kla$$ifier'  #change this
+$classifier_password = 'kla$$ifier'  #change this
 
-  postgresql::server::role { 'classifier':
-    password_hash => postgresql_password('classifier', $classifier_password),
-  } ->
-  
-  postgresql::server::db { 'classifier':
-    user     => 'classifier',
-    password => postgresql_password('classifier', $classifier_password),
-  }
+postgresql::server::role { 'classifier':
+  password_hash => postgresql_password('classifier', $classifier_password),
+  require       => Class['postgresql::server'],
+} ->
+
+postgresql::server::db { 'classifier':
+  user     => 'classifier',
+  password => postgresql_password('classifier', $classifier_password),
+}
 {% endhighlight %}
 
 The last thing you need to do is make sure that the `classifier` role can connect to the server using password authentication:
 
 {% highlight ruby %}
-  postgresql::server::pg_hba_rule {'Allow the classifier role to access its database':
-    type        => 'host',
-    database    => 'classifier',
-    user        => 'classifier',
-    address     => '127.0.0.1/32',
-    description => 'Open up postgresql for access to classifier database',
-    auth_method => 'password',
-  }
+postgresql::server::pg_hba_rule { 'Allow the classifier role to access its database':
+  type        => 'host',
+  database    => 'classifier',
+  user        => 'classifier',
+  address     => '127.0.0.1/32',
+  description => 'Open up postgresql for access to classifier database',
+  auth_method => 'password',
+}
 {% endhighlight %}
 
 ## Install and Configure the Classifier
@@ -66,9 +67,11 @@ SSLDIR="/etc/classifier/ssl"
 cp $CERT $SSLDIR/cert.pem
 cp $KEY $SSLDIR/key.pem
 cp $CACERT $SSLDIR/ca.pem
+chown -R classifier:classifier $SSLDIR
+chmod 600 $SSLDIR/*
 {% endhighlight %}
 
-### Editing `config.ini`
+### Editing `classifier.ini`
 The Classifier's main configuration file is located at `/etc/classifier/classifier.ini`. Before you can do anything useful with the Classifier, you'll need to edit that file to point to the classifier database, certificate files, and puppet master:
 
 {% highlight ini %}
@@ -91,8 +94,8 @@ puppet-master = https://master:8140
 [database]
 dbname = classifier
 user = classifier
-# add the password you set above:
-password = 
+# replace with the password you set above:
+password = kla$$ifier
 {% endhighlight %}
 
 With that done, the Classifier will be ready to go. You should (re)start the `classifier` service and watch the log file (`/var/log/classifier/classifier-daemon.log`) to make sure it starts properly.
