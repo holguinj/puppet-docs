@@ -32,21 +32,21 @@ Expressions can be used in the following places:
 
 * The operand of another expression
 * The condition of an [if statement][if]
-* The control expression of a [case statement][case]
+* The control expression of a [case statement][case] or [selector statement][selector]
 * The assignment of a variable
 * The value of a resource attribute
 * The argument(s) of a [function][] call
 
-They cannot be used in selectors or as resource titles.
+They cannot be used as resource titles.
 
 Syntax
 -----
 
-An expression consists of two **operands** separated by an **operator;** the only operator that takes one operand is `!` (not).
+An expression generally consists of two **operands** separated by an **operator.** A few operators take one operand: `!` (not), `-` (numeric negation), and `*` (splat).
 
 {% highlight ruby %}
     5 < 9
-    ($operatingsystem != 'Solaris')
+    ($operatingsystem != 'Solaris')n
     $kernel in ['linux', 'solaris']
     !str2bool($is_virtual)
 {% endhighlight %}
