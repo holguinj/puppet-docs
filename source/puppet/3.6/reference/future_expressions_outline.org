@@ -1,0 +1,16 @@
+* Q's
+** What expressions are there?
+** Any syntax gotchas?
+
+* Expressions
+** What are expressions in the context of Puppet?
+** What are the different types?
+*** Assignment, logical, arithmetic, regex, append/concat
+** What's up with the syntax? Where can they appear?
+** Operator listing:
+*** Assignment Operator
+*** Comparison Operators
+*** Boolean Operators
+*** Arithmetic Operators
+*** Array Operators
+** Order of operations

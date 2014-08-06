@@ -1,5 +1,5 @@
----
-title: "Language: Expressions"
+ ---
+title: "Future Language: Expressions"
 layout: default
 canonical: "/puppet/latest/reference/lang_expressions.html"
 ---
@@ -42,18 +42,13 @@ They cannot be used as resource titles.
 Syntax
 -----
 
-An expression generally consists of two **operands** separated by an **operator.** A few operators take one operand: `!` (not), `-` (numeric negation), and `*` (splat).
+Operator expressions take two basic forms:
 
-{% highlight ruby %}
-    5 < 9
-    ($operatingsystem != 'Solaris')
-    $kernel in ['linux', 'solaris']
-    !str2bool($is_virtual)
-{% endhighlight %}
+* **infix operators** appear between two operands: `$a = 1`, `5 < 9`, `$operatingsystem != 'Solaris'`, etc.
+* **prefix operators** appear immediately before a single operand: `*$interfaces`, `!$is_virtual`, etc.
 
-In the examples above, the operators are `<`, `!=`, `in`, and `!`.
-
-Optionally, expressions can be surrounded by parentheses.
+The vast majority of operators are infixes. Expressions may optionally be surrounded by parentheses, which can help
+make your code clearer: `($operatingsystem == 'Solaris') or ($virtual == 'LXC')`.
 
 ### Operands
 
