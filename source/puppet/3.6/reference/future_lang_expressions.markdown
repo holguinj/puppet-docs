@@ -1,5 +1,5 @@
----
-title: "Language: Expressions"
+ ---
+title: "Future Language: Expressions"
 layout: default
 canonical: "/puppet/latest/reference/lang_expressions.html"
 ---
@@ -33,7 +33,7 @@ Expressions can be used in the following places:
 * The operand of another expression
 * The condition of an [if statement][if]
 * The control expression of a [case statement][case] or [selector statement][selector]
-* The assignment of a variable
+* The assignment value of a variable
 * The value of a resource attribute
 * The argument(s) of a [function][] call
 
@@ -42,18 +42,13 @@ They cannot be used as resource titles.
 Syntax
 -----
 
-An expression generally consists of two **operands** separated by an **operator.** A few operators take one operand: `!` (not), `-` (numeric negation), and `*` (splat).
+Operator expressions take two basic forms:
 
-{% highlight ruby %}
-    5 < 9
-    ($operatingsystem != 'Solaris')
-    $kernel in ['linux', 'solaris']
-    !str2bool($is_virtual)
-{% endhighlight %}
+* **infix operators** appear between two operands: `$a = 1`, `5 < 9`, `$operatingsystem != 'Solaris'`, etc.
+* **prefix operators** appear immediately before a single operand: `*$interfaces`, `!$is_virtual`, etc.
 
-In the examples above, the operators are `<`, `!=`, `in`, and `!`.
-
-Optionally, expressions can be surrounded by parentheses.
+The vast majority of operators are infixes. Expressions may optionally be surrounded by parentheses, which can help
+make your code clearer: `($operatingsystem == 'Solaris') or ($virtual == 'LXC')`.
 
 ### Operands
 
@@ -167,15 +162,21 @@ Resolves to `true` if the right operand contains the left operand. The exact def
 This operator is **non-transitive** with regard to data types: it accepts a [string][strings] as the left operand, and the following types of right operands:
 
 * [Strings][] --- Tests whether the left operand is a substring of the right, ignoring case.
-* [Arrays][] --- Tests whether one of the members of the array is identical to the left operand.
-* [Hashes][] --- Tests whether the hash has a **key** named after the left operand.
+* [Arrays][] --- Tests whether one of the members of the array is identical to the left operand (case-sensitive).
+* [Hashes][] --- Tests whether the hash has a **key** identical to the left operand (case-sensitive).
 
 Examples:
 
 {% highlight ruby %}
+    # Right-hand operand is a string:
     'eat' in 'eaten' # resolves to true
     'Eat' in 'eaten' # resolves to true
+
+    # Right hand operand is an array:
     'eat' in ['eat', 'ate', 'eating'] # resolves to true
+    'Eat' in ['eat', 'ate', 'eating'] # resolves to false
+
+    # Right hand operand is a hash:
     'eat' in { 'eat' => 'present tense', 'ate' => 'past tense'} # resolves to true
     'eat' in { 'present' => 'eat', 'past' => 'ate' } # resolves to false
 {% endhighlight %}
@@ -258,13 +259,19 @@ Resolves to an array containing the elements in the left operand and the element
 Resolves to an array containing the elements in the left operand without the elements in the right operand. The left operand must be an array, but the right
 operand may be any data type. This operation **does not change** the operands.
 
+
+Assignment Operations
+-----
+
 ### `=` (assignment)
 
-The assignment operator sets the [variable](http://docs.puppetlabs.com/puppet/latest/reference/lang_variables.html)
+The assignment operator sets the [variable](http://docs.puppetlabs.com/puppet/latest/reference/lang_variables.html) on the left hand side to the value on the right hand side. The entire expression resolves to the value of the right hand side.
+
+Note that variables can only be set once, after which any attempt to set the variable to a new value will cause an error.
 
 ### `+=` and `-=` (concatenation and removal with assignment)
 
-Arrays, like the rest of Puppet's data types, are **immutable**. But even though you can't technically alter an array, you can create a new one in the local scope in a way that looks a bit like mutation:
+Arrays, like the rest of Puppet's data types, are **immutable**. But even though you can't technically alter an array, you can create a new one in the local scope that reuses the short name of a variable in a higher scope:
 
 {% highlight ruby %}
 $a = [10, 20]  # creates the global variable ::$a
@@ -287,6 +294,7 @@ With the exception of the `in` operator, the available operators in Backus-Naur 
              | <exp> <boolop> <exp>
              | <exp> <compop> <exp>
              | <exp> <matchop> <regex>
+             | <variable> <assignop> <rightvalue>
              | ! <exp>
              | - <exp>
              | "(" <exp> ")"
@@ -296,6 +304,7 @@ With the exception of the `in` operator, the available operators in Backus-Naur 
     <boolop>  ::= "and" | "or"
     <compop>  ::= "==" | "!=" | ">" | ">=" | "<=" | "<"
     <matchop>  ::= "=~" | "!~"
+    <assignop> ::= "=" | "+=" | "-="
 
     <rightvalue> ::= <variable> | <function-call> | <literals>
     <literals> ::= <float> | <integer> | <hex-integer> | <octal-integer> | <quoted-string>
