@@ -1,4 +1,4 @@
- ---
+---
 title: "Future Language: Expressions"
 layout: default
 canonical: "/puppet/latest/reference/lang_expressions.html"
@@ -95,7 +95,7 @@ The precedence of operators, from highest to lowest:
 10. `>=`, `<=`, `>`, and `<` (greater or equal, less or equal, greater than, and less than)
 11. `and`
 12. `or`
-13. `+=`, `-=`, `=` (append to, delete from, assign)
+13. `=` (assignment)
 
 
 Comparison Operators
@@ -233,7 +233,7 @@ Resolves to the quotient of the two operands.
 
 ### `*` (multiplication)
 
-Resolves to the product of the two operands.
+Resolves to the product of the two operands. Not to be confused with the [splat operator](#splat), which only takes one operand.
 
 ### `%` (modulo)
 
@@ -249,6 +249,16 @@ Right bitwise shift: shifts the left operand by the number of places specified b
 
 Array Operations
 -----
+
+### `*` (splat)
+
+"Unfolds" an array into a series of function arguments. For example:
+
+{% highlight ruby %}
+    $a = ['vim', 'emacs']
+    myfunc($a)    # calls myfunc with a single argument: the array containing 'vim' and 'emacs'
+    myfunc(*$a)   # calls myfunc with two arguments: 'vim' and 'emacs'
+{% endhighlight %}
 
 ### `+` (concatenation)
 
@@ -268,22 +278,6 @@ Assignment Operations
 The assignment operator sets the [variable](http://docs.puppetlabs.com/puppet/latest/reference/lang_variables.html) on the left hand side to the value on the right hand side. The entire expression resolves to the value of the right hand side.
 
 Note that variables can only be set once, after which any attempt to set the variable to a new value will cause an error.
-
-### `+=` and `-=` (concatenation and removal with assignment)
-
-Arrays, like the rest of Puppet's data types, are **immutable**. But even though you can't technically alter an array, you can create a new one in the local scope that reuses the short name of a variable in a higher scope:
-
-{% highlight ruby %}
-$a = [10, 20]  # creates the global variable ::$a
-
-class innerscope {
-  $a += 30  # creates a new variable $innerscope::a equal to [10, 20, 30]
-  notice($a)
-}
-
-include innerscope # prints "Notice: [10, 20, 30]"
-notice($a)  # prints "Notice: [10, 20]"
-{% endhighlight %}
 
 Backus-Naur Form
 -----
