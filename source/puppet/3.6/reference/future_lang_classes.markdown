@@ -4,6 +4,7 @@ title: "Future Language: Classes"
 canonical: "/puppet/latest/reference/lang_classes.html"
 ---
 
+[datatypes]: TODO
 [sitedotpp]: ./dirs_manifest.html
 [collector_override]: ./lang_resources.html#amending-attributes-with-a-collector
 [namespace]: ./lang_namespaces.html
@@ -98,8 +99,9 @@ The general form of a class definition is:
 * An optional **set of parameters,** which consists of:
     * An opening parenthesis
     * A comma-separated list of **parameters,** each of which consists of:
+        * An optional data type annotation (the default is `Any`)
         * A new [variable][] name, including the `$` prefix
-        * An optional equals (=) sign and **default value** (any data type)
+        * An optional equals (=) sign and **default value** (must match the type annotation)
     * An optional trailing comma after the last parameter
     * A closing parenthesis
 * Optionally, the `inherits` keyword followed by a single class name
@@ -116,6 +118,8 @@ The general form of a class definition is:
 Each class parameter can be used as a normal [variable][] inside the class definition. The values of these variables are not set with [normal assignment statements][variable_assignment] or read from top or node scope; instead, they are [automatically set when the class is declared][setting_parameters].
 
 Note that if a class parameter lacks a default value, the user of the module **must** set a value themselves (either in their [external data][external_data] or an [override][]). As such, you should supply defaults wherever possible.
+
+Each parameter may be preceeded by an optional **[data type][datatypes] annotation**. If you include one, puppet will check the parameter *at runtime* to make sure that it has the right type. If no type annotation is provided, the default `Any` type will be assumed.
 
 ### Location
 
@@ -160,7 +164,7 @@ Inheritance causes three things to happen:
 > * When you need to override resource attributes in the base class.
 > * To let a "params class" provide default values for another class's parameters:
 >
->       class example ($my_param = $example::params::myparam) inherits example::params { ... }
+>       class example (String $my_param = $example::params::myparam) inherits example::params { ... }
 >
 >   This pattern works by guaranteeing that the params class is evaluated before Puppet attempts to evaluate the main class's parameter list. It is especially useful when you want your default values to change based on system facts and other data, since it lets you isolate and encapsulate all that conditional logic.
 >
@@ -296,7 +300,7 @@ The `include` function uses [include-like behavior][include-like]. (Multiple dec
 The `require` function (not to be confused with the [`require` metaparameter][relationships]) declares one or more classes, then causes them to become a [dependency][relationships] of the surrounding container.
 
 {% highlight ruby %}
-    define apache::vhost ($port, $docroot, $servername, $vhost_name) {
+    define apache::vhost (String $port, String $docroot, String $servername, String $vhost_name) {
       require apache
       ...
     }
@@ -433,8 +437,8 @@ This design pattern can make for significantly cleaner code while enabling some 
     # /etc/puppet/modules/webserver/manifests/init.pp
 
     class webserver(
-     $packages  = $webserver::params::packages,
-     $vhost_dir = $webserver::params::vhost_dir
+     String $packages  = $webserver::params::packages,
+     String $vhost_dir = $webserver::params::vhost_dir
     ) inherits webserver::params {
 
      package { $packages: ensure => present }
@@ -456,7 +460,7 @@ This is functionally equivalent to doing the following:
 {% highlight ruby %}
     # /etc/puppet/modules/webserver/manifests/init.pp
 
-    class webserver( $packages = 'UNSET', $vhost_dir = 'UNSET' ) {
+    class webserver(String $packages = 'UNSET', String $vhost_dir = 'UNSET' ) {
 
      if $packages == 'UNSET' {
        $real_packages = $operatingsystem ? {
