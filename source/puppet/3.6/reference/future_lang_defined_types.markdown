@@ -4,6 +4,7 @@ layout: default
 canonical: "/puppet/latest/reference/lang_defined_types.html"
 ---
 
+[datatypes]: TODO
 [sitedotpp]: ./dirs_manifest.html
 [namespaces]: ./lang_namespaces.html
 [collector]: ./lang_collectors.html
@@ -35,7 +36,7 @@ Syntax
 
 {% highlight ruby %}
     # /etc/puppetlabs/puppet/modules/apache/manifests/vhost.pp
-    define apache::vhost ($port, $docroot, $servername = $title, $vhost_name = '*') {
+    define apache::vhost (Integer $port, String $docroot, String $servername = $title, String $vhost_name = '*') {
       include apache # contains Package['httpd'] and Service['httpd']
       include apache::params # contains common config settings
       $vhost_dir = $apache::params::vhost_dir
@@ -60,8 +61,9 @@ The general form of a type definition is:
 * An optional **set of parameters,** which consists of:
     * An opening parenthesis
     * A comma-separated list of **parameters,** each of which consists of:
+        * An optional [data type][datatypes] annotation (defaults to `Any`)
         * A new [variable][] name, including the `$` prefix
-        * An optional equals sign and **default value** (any data type)
+        * An optional equals (=) sign and **default value** (must match the type annotation)
     * An optional trailing comma after the last parameter
     * A closing parenthesis
 * An opening curly brace
@@ -80,7 +82,7 @@ To declare a resource of the `apache::vhost` type from the example above:
 
 {% highlight ruby %}
     apache::vhost {'homepages':
-      port    => 8081,
+      port    => '8081',
       docroot => '/var/www-testhost',
     }
 {% endhighlight %}
@@ -113,7 +115,7 @@ Every defined type gets two "free" parameters, which are always available and do
 Unlike the other parameters, the values of `$title` and `$name` are already available **inside the parameter list.** This means you can use `$title` as the default value (or part of the default value) for another attribute:
 
 {% highlight ruby %}
-    define apache::vhost ($port, $docroot, $servername = $title, $vhost_name = '*') { ...
+    define apache::vhost (Integer $port, String $docroot, String $servername = $title, String $vhost_name = '*') { ...
 {% endhighlight %}
 
 ### Resource Uniqueness
