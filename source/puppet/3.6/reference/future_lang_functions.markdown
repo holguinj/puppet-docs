@@ -1,7 +1,7 @@
 ---
-title: "Language: Functions"
+title: "Future Language: Functions"
 layout: default
-canonical: "/puppet/latest/reference/lang_functions.html"
+canonical: "/puppet/latest/reference/future_lang_functions.html"
 ---
 
 [func_ref]: /references/latest/function.html
