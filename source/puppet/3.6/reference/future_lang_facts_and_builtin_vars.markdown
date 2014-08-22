@@ -1,7 +1,7 @@
 ---
 layout: default
-title: "Language: Facts and Built-in Variables"
-canonical: "/puppet/latest/reference/lang_facts_and_builtin_vars.html"
+title: "Future Language: Facts and Built-in Variables"
+canonical: "/puppet/latest/reference/future_lang_facts_and_builtin_vars.html"
 ---
 
 [definedtype]: ./lang_defined_types.html
@@ -30,7 +30,7 @@ Before requesting a [catalog][] from a puppet master (or compiling one locally w
 
 Puppet receives this information as **facts,** which are pre-set variables you can use anywhere in your manifests. Puppet can use both the built-in [core facts][core_facts] and any [custom facts][customfacts] present in your modules.
 
-By default, all facts are [strings][]. If you use Facter 2.0 and [enable structured facts in Puppet][structured_facts_on], facts can contain any data type, including arrays and hashes. At this time, structured facts don't work with extensions like PuppetDB.
+By default, all facts are [strings][]. If you use Facter 2.0 and [enable structured facts in Puppet][structured_facts_on], facts can contain any data type, including arrays and hashes. Using structured facts with PuppetDB requires PuppetDB 2.2.0 or later.
 
 * [See here for a complete list of built-in facts][core_facts]. Note that the list depends on the version of Facter you are using.
 * [See here for a guide to writing custom facts][customfacts]. They're useful and easy, and most Puppet users should learn how to make them.

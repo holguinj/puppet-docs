@@ -1,7 +1,7 @@
 ---
 layout: default
-title: "Language: Node Definitions"
-canonical: "/puppet/latest/reference/lang_node_definitions.html"
+title: "Future Language: Node Definitions"
+canonical: "/puppet/latest/reference/future_lang_node_definitions.html"
 ---
 
 [hiera]: /hiera/latest
@@ -34,8 +34,6 @@ Location
 -----
 
 Node definitions should go in [the site manifest (site.pp)][sitepp].
-
-Alternately, you can store node definitions in any number of manifest files which are [imported][import] into site.pp:
 
 {% highlight ruby %}
     # /etc/puppetlabs/puppet/manifests/site.pp

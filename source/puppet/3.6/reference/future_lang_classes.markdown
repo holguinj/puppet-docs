@@ -93,7 +93,6 @@ Defining a class makes it available for later use. It doesn't yet add any resour
 
 The general form of a class definition is:
 
-* The optional `private` keyword
 * The `class` keyword
 * The [name][allowed] of the class
 * An optional **set of parameters,** which consists of:

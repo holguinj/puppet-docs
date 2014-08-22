@@ -1,7 +1,7 @@
 ---
 layout: default
-title: "Language: Reserved Words and Acceptable Names"
-canonical: "/puppet/latest/reference/lang_reserved.html"
+title: "Future Language: Reserved Words and Acceptable Names"
+canonical: "/puppet/latest/reference/future_lang_reserved.html"
 ---
 
 [settings]: ./config_about_settings.html
@@ -31,11 +31,10 @@ Several words in the Puppet language are **reserved**. This means they:
 * Cannot be used as names for classes.
 * Cannot be used as names for custom resource types or defined resource types.
 
-> **Note:** As of Puppet 3, reserved words MAY be used as names for attributes in custom resource types. This is a change from the behavior of 2.7 and earlier.
-
 The following words are reserved:
 
 * `and` --- expression operator
+* `attr` --- reserved for future use
 * `case` --- language keyword
 * `class` --- language keyword
 * `default` --- language keyword
@@ -43,13 +42,16 @@ The following words are reserved:
 * `else` --- language keyword
 * `elsif` --- language keyword
 * `false` --- boolean value
+* `function` --- reserved for future use
 * `if` --- language keyword
-* `in` --- expression operator
 * `import` --- language keyword
+* `in` --- expression operator
 * `inherits` --- language keyword
 * `node` --- language keyword
 * `or` --- expression operator
+* `private` --- reserved for future use
 * `true` --- boolean value
+* `type` --- reserved for future use
 * `undef` --- special value
 * `unless` --- language keyword
 
@@ -62,6 +64,34 @@ The following are built-in namespaces used by Puppet and so must not be used as 
 
 * `main` --- Puppet automatically creates a `main` [class][], which [contains][] any [resources][] not contained by any other class.
 * `settings` --- The automatically created `settings` namespace contains variables with the [settings][] available to the compiler (that is, the puppet master's settings).
+
+Additionally, the names of data types can't be used as class names (even in lowercase):
+
+* `any`, `Any`
+* `array`, `Array`
+* `boolean`, `Boolean`
+* `catalogentry`, `catalogEntry, CatalogEntry`
+* `class`, `Class`
+* `collection`, `Collection`
+* `data`, `Data`
+* `data`, `Data`
+* `default`, `Default`
+* `enum`, `Enum`
+* `float`, `Float`
+* `hash`, `Hash`
+* `integer`, `Integer`
+* `numeric`, `Numeric`
+* `optional`, `Optional`
+* `pattern`, `Pattern`
+* `resource`, `Resource`
+* `runtime`, `Runtime`
+* `scalar`, `Scalar`
+* `string`, `String`
+* `struct`, `Struct`
+* `tuple`, `Tuple`
+* `type`, `Type`
+* `undef`, `Undef`
+* `variant`, `Variant`
 
 Reserved Variable Names
 -----
@@ -91,11 +121,11 @@ Variable names begin with a `$` (dollar sign) and can include:
 * Numbers
 * Underscores
 
-There is no additional restriction on the first non-$ character of a variable name. Variable names are case-sensitive. Note that [some variable names are reserved.](#reserved-variable-names)
+The first character after the $ may not be an uppercase letter, and generally may not be an underscore (local variables are the exception). Variable names are case-sensitive. Note that [some variable names are reserved.](#reserved-variable-names)
 
 Variable names should match the following regular expression:
 
-    \A\$[a-zA-Z0-9_]+\Z
+    \A\$[a-z0-9][a-zA-Z0-9_]+\Z
 
 Variable names can be [fully qualified][qualified_var] to refer to variables from foreign [scopes][]. Qualified variable names look like `$class::name::variable_name`. They begin with `$`, the name of the class that contains the variable, and the `::` (double colon) [namespace][] separator, and end with the variable's local name.
 
