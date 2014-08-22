@@ -65,7 +65,7 @@ The following are built-in namespaces used by Puppet and so must not be used as 
 * `main` --- Puppet automatically creates a `main` [class][], which [contains][] any [resources][] not contained by any other class.
 * `settings` --- The automatically created `settings` namespace contains variables with the [settings][] available to the compiler (that is, the puppet master's settings).
 
-Additionally, the names of data types can't be used as class names (even in lowercase):
+Additionally, the names of data types can't be used as class names:
 
 * `any`, `Any`
 * `array`, `Array`
@@ -98,7 +98,6 @@ Reserved Variable Names
 
 The following variable names are reserved, and you **must not** assign values to them:
 
-* `$string` --- If a variable with this name is present, all templates and inline templates in the current scope will return the value of `$string` instead of whatever they were meant to return. This is a bug rather than a deliberate design, and can be tracked at [issue #14093](http://projects.puppetlabs.com/issues/14093).
 * Every variable name consisting only of numbers, starting with `$0` --- These [regex capture variables][capture] are automatically set by regular expressions used in [conditional statements][conditional], and their values do not persist outside their associated code block or selector value. Puppet's behavior when these variables are directly assigned a value is undefined.
 * Puppet's [built-in variables][built_in] and [facts][facts] are reserved at [top scope][topscope], but can be safely re-used at node or local scope.
 * If [enabled][trusted_on], the `$trusted` and `$facts` variables are reserved for facts and cannot be reassigned at local scopes.
@@ -121,7 +120,7 @@ Variable names begin with a `$` (dollar sign) and can include:
 * Numbers
 * Underscores
 
-The first character after the $ may not be an uppercase letter, and generally may not be an underscore (local variables are the exception). Variable names are case-sensitive. Note that [some variable names are reserved.](#reserved-variable-names)
+The first character after the $ must not be an uppercase letter, and generally may not be an underscore (local variables are the exception). Variable names are case-sensitive. Note that [some variable names are reserved.](#reserved-variable-names)
 
 Variable names should match the following regular expression:
 
@@ -131,7 +130,7 @@ Variable names can be [fully qualified][qualified_var] to refer to variables fro
 
 Qualified variable names should match the following regular expression:
 
-    \A\$([a-z][a-z0-9_]*)?(::[a-z][a-z0-9_]*)*::[a-zA-Z0-9_]+\Z
+    \A\$([a-z][a-z0-9_]*)?(::[a-z][a-z0-9_]*)*::[a-z][a-zA-Z0-9_]+\Z
 
 ### Classes and Types
 
