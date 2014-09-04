@@ -1,6 +1,6 @@
 ---
 layout: default
-title: "Language: Variables"
+title: "Future Language: Variables"
 canonical: "/puppet/latest/reference/lang_variables.html"
 ---
 
@@ -65,27 +65,6 @@ Puppet can resolve variables in [double-quoted strings][double_quote]; this is c
 
 Inside a double-quoted string, you can optionally surround the name of the variable (the portion after the `$`) with curly braces (`${var_name}`). This syntax helps to avoid ambiguity and allows variables to be placed directly next to non-whitespace characters. These optional curly braces are only allowed inside strings.
 
-### Appending Assignment
-
-When creating a local variable with the same name as a variable in [top scope, node scope, or a parent scope][scope], you can optionally append to the received value with the `+=` (plus-equals) appending assignment operator.
-
-{% highlight ruby %}
-    $ssh_users = ['myself', 'someone']
-
-    class test {
-      $ssh_users += ['someone_else']
-    }
-{% endhighlight %}
-
-In the example above, the value of `$ssh_users` inside class `test` would be `['myself', 'someone', 'someone_else']`.
-
-The value appended with the `+=` operator **must** be the same [data type][datatype] as the received value. This operator can only be used with strings, arrays, and hashes:
-
-* Strings: Will concatenate the two strings.
-* Arrays: Will add the elements of the appended array to the end of the received array.
-* Hashes: Will merge the two hashes.
-
-
 Behavior
 -----
 
@@ -130,8 +109,6 @@ Unlike most other languages, Puppet only allows a given variable to be assigned 
 
 In the example above, `$myvar` has several different values, but only one value will apply to any given scope.
 
-> Note: Due to insufficient protection of the scope object that gets passed into templates, it is possible to reassign a variable inside a template and have the new value persist in the Puppet scope after the template is evaluated. **Do not do this.** This behavior is considered a bug rather than designed behavior and may be removed at any point without a deprecation period.
-
 ### Parse-Order Dependence
 
 Unlike [resource declarations][resource], variable assignments are parse-order dependent. This means you cannot resolve a variable before it has been assigned.
@@ -148,5 +125,3 @@ Variable names are case-sensitive and can include alphanumeric characters and un
 Qualified variable names are prefixed with the name of their scope and the `::` (double colon) namespace separator. (For example, the `$vhostdir` variable from the `apache::params` class would be `$apache::params::vhostdir`.)
 
 [See the section on acceptable characters in variable names][acceptable] for more details. Additionally, [several variable names are reserved][reserved].
-
-
