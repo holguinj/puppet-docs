@@ -34,6 +34,6 @@ There are a few limitations to keep in mind with the `Pattern` type:
 You can use the `Enum` type to check that a string exactly matches one of several options (provided as parameters). For example:
 
 * `Enum['stopped', 'running']` -- a string that is either `'stopped'` or `'running'`
-* `Enum['true', 'false']` -- a string that is either `'true'` or `'false'`
+* `Enum['true', 'false']` -- a string that is either `'true'` or `'false'`. Will not match `true` or `false` (without quotes).
 
-You must provide at least one parameter, but the type is only really useful with two or more options. The `Enum` type **only validates strings**, not booleans (`true` or `false`), integers, or any other type.
+You must provide at least one parameter, but this type is only really useful with two or more options. The `Enum` type **only validates strings**, not booleans (`true` or `false`), integers, or any other type.
