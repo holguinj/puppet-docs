@@ -1,6 +1,6 @@
 ---
 layout: default
-title: "Language: Data Types"
+title: "Future Language: Data Types"
 canonical: "/puppet/latest/reference/lang_datatypes.html"
 ---
 
@@ -38,7 +38,7 @@ The condition of an ["if" statement][if] is a boolean value. All of Puppet's [co
 If a non-boolean value is used where a boolean is required, it will be automatically converted to a boolean as follows:
 
 Strings
-: Empty strings are false; all other strings are true. That means the string `"false"` actually resolves as true. **Warning: all [facts][] are strings in this version of Puppet, so "boolean" facts must be handled carefully.**
+: All strings are true, including the empty string (`""`). That means the string `"false"` actually resolves as true. 
 
   > Note: the [puppetlabs-stdlib][stdlib] module includes a `str2bool` function which converts strings to boolean values more intelligently. 
 
