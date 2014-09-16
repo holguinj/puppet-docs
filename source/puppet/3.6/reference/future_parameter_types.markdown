@@ -19,9 +19,42 @@ Examples:
 * `Integer[2, 8]` -- any integer from 2 to 8, inclusive
 
 ### Float
+
+Matches: floating point numbers within the limitations of Ruby's [Float class](http://www.ruby-doc.org/core-2.1.2/Float.html).
+Required Parameters: None.
+Optional Parameters: minimum value, maximum value.
+
+Examples:
+
+* `Float` -- any integer
+* `Float[1.6]` -- any floating point number greater than or equal to 1.6
+* `Float[1.6, 3.501]` -- any floating point number from 1.6 to 3.501, inclusive
+
 ### Boolean
+
+Matches: `true` or `false`
+Required Parameters: None.
+Optional Parameters: None.
+
 ### Regexp
+
+Matches: regular expressions. Not to be confused with the `Pattern` type, which matches strings.
+Required Parameters: None.
+Optional Parameters: Accepts a regex pattern for exact comparison.
+
+Examples:
+
+* `Regexp` -- matches any regular expression.
+* `Regexp[/foo/]` -- matches the regular expression `/foo/` only
+
 ### String
+
+Matches: strings.
+Required Parameters: none.
+Optional Parameters: minimum length, maximum length.
+
+For more details on String and its subtypes `Pattern` and `Enum`, see the [String Parameter Type](future_string_type.html) page.
+
 ### Array
 ### Hash
 
