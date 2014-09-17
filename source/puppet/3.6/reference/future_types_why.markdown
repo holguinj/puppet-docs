@@ -96,7 +96,7 @@ There are two things to notice about the above code:
 So Puppet's type-checking only ensures that there are no type errors *in a given catalog*. It won't catch errors that, for whatever reason,
 don't affect the catalog in question.
 
-### You Can't Write Your own Error Messages
+### Writing Your own Error Messages
 
 Here's that re-written example from [puppetlabs-puppetdb](https://forge.puppetlabs.com/puppetlabs/puppetdb) again, with a twist:
 
@@ -117,4 +117,20 @@ The class is expecting a string, but `true` (without quotes) is a boolean, so in
 
     Error: Expected parameter 'puppetdb_server_status' of 'Class[Puppetdb::Server]' to have type Enum['true', 'running', 'false', 'stopped'], got Boolean at ...
 
-That should be adequate for most purposes, but keep in mind that you can't override the message in a type error.
+That should be adequate for most purposes, but if you'd rather throw your own error message, you can do that by asserting the type separately from the parameter declaration:
+
+{% highlight ruby %}
+class puppetdb::server(
+  $puppetdb_service_status = $puppetdb::params::puppetdb_service_status,
+  ) {
+  assert_type(Enum['true','running','false','stopped'], $puppetdb_service_status) |$expected, $actual| { fail("Valid choices for puppetdb_service_status are 'true', 'running', 'false', or 'stopped', not: ${actual}") }
+  
+  # ...
+}
+
+class {'puppetdb::server':
+  puppetdb_service_status => true,
+}
+{% endhighlight %}
+
+See the documentation for [assert_type](function.html#asserttype) for more information.
