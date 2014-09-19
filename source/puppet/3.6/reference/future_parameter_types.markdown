@@ -153,12 +153,14 @@ Matches: same as Hash, but specifies the type of every key and value.
 Required Parameters: a hash containing `key => Type` pairs. In order to validate the input hash, each key must be present and have a value that matches the type declaration.
 Optional Parameters: none.
 
+Note: keys that are missing in the input hash are treated as `undef`. That means that it's possible to have optional keys in a Struct, as long as the corresponding type is compatible with `undef` (i.e., `Optional` or `Any`).
+
 Examples:
 
 * `Struct[{mode => Enum[read, write, update],
            path => String[1]}]` -- matches a hash with both `mode` and `path` keys, the values of which must match `Enum['read', 'write', 'update']` and `String[1]`, respectively.
 * `Struct[{filename => String[1],
-           path     => Optional[String [1]]}]` -- same as above, but the value for `path` may be `undef`. The `path` key must still be present.
+           path     => Optional[String [1]]}]` -- same as above, but the `path` key is optional. If present, it must match `String[1]`.
 
 ### Optional
 
@@ -172,6 +174,20 @@ Examples:
 * `Optional[Array[Integer[0, 10]]]` -- matches an array of integers between 0 and 10, or `undef`.
 
 ### Variant
-### Enum; an enumeration of strings
-### Pattern; an enumeration of regular expression patterns
-### Any; the parent type of all types
+
+Matches: anything that matches at least one of the given parameter types.
+Required Parameters: one or more parameter types.
+Optional Parameters: none.
+
+Examples:
+
+* `Variant[Integer, Float]` -- matches any integer or floating point number (equivalent to `Numeric`).
+* `Variant[Enum['true', 'false'], Boolean]` -- matches `'true'`, `'false'`, `true`, or `false`.
+
+### Any
+
+Matches: anything at all, including `undef`.
+Required Parameters: none.
+Optional Parameters: none.
+
+Note: the `Any` parameter type is the default, and will never fail to match.
