@@ -12,16 +12,16 @@ Using the String Type in Parameter Declarations
 
 The `String` type accepts one or two optional parameters: minimum length and maximum length. If you provide only one parameter, it will be treated as the minimum length. For example:
 
-* `String` -- a string of any length
-* `String[6]` -- a string with *at least* 6 characters
-* `String[6, 8]` -- a string with at least 6 and at most 8 characters
+* `String` --- matches a string of any length.
+* `String[6]` --- matches a string with *at least* 6 characters.
+* `String[6, 8]` --- matches a string with at least 6 and at most 8 characters.
 
 ## Validating Regex With the `Pattern` Type
 
 You can also validate strings against a regular expression by using the `Pattern` type, which requires at least one regular expression as a parameter. For example:
 
-* `Pattern[/foo/]` -- a string containing "foo"
-* `Pattern[/foo/, /bar/]` -- a string that contains "foo" or "bar"
+* `Pattern[/foo/]` --- matches a string containing "foo".
+* `Pattern[/foo/, /bar/]` --- matches a string that contains "foo" or "bar".
 
 There are a few limitations to keep in mind with the `Pattern` type:
 
@@ -33,7 +33,7 @@ There are a few limitations to keep in mind with the `Pattern` type:
 
 You can use the `Enum` type to check that a string exactly matches one of several options (provided as parameters). For example:
 
-* `Enum['stopped', 'running']` -- a string that is either `'stopped'` or `'running'`
-* `Enum['true', 'false']` -- a string that is either `'true'` or `'false'`. Will not match `true` or `false` (without quotes).
+* `Enum['stopped', 'running']` --- matches a string that is either `'stopped'` or `'running'`.
+* `Enum['true', 'false']` --- matches a string that is either `'true'` or `'false'`. Will not match `true` or `false` (without quotes).
 
 You must provide at least one parameter, but this type is only really useful with two or more options. The `Enum` type **only validates strings**, not booleans (`true` or `false`), integers, or any other type.

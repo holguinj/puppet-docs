@@ -86,7 +86,7 @@ Examples:
 * `Array[String]` --- matches an array of any size that contains only strings.
 * `Array[Integer, 6]` --- matches an array containing at least six integers.
 * `Array[Float, 6, 12]` --- matches an array containing at least six and at most 12 floating-point numbers.
-* `Array[ Variant[String, Integer] ]` --- matches an array of any size that contains only strings and/or integers.
+* `Array[Variant[String, Integer]]` --- matches an array of any size that contains only strings and/or integers.
 * `Array[Any, 2]` --- matches an array containing at least two elements, no matter what type those elements are.
 
 ### Hash
@@ -114,6 +114,17 @@ Examples:
 - **Optional Parameters**: none.
 
 Note: the `Collection` type is equivalent to `Variant[Array, Hash]`.
+
+### Variant
+
+- **Matches**: anything that matches at least one of the given parameter types.
+- **Required Parameters**: one or more parameter types.
+- **Optional Parameters**: none.
+
+Examples:
+
+* `Variant[Integer, Float]` --- matches any integer or floating point number (equivalent to `Numeric`).
+* `Variant[Enum['true', 'false'], Boolean]` --- matches `'true'`, `'false'`, `true`, or `false`.
 
 ### Scalar
 
@@ -186,17 +197,6 @@ Examples:
 
 * `Optional[String]` --- matches any string or `undef`.
 * `Optional[Array[Integer[0, 10]]]` --- matches an array of integers between 0 and 10, or `undef`.
-
-### Variant
-
-- **Matches**: anything that matches at least one of the given parameter types.
-- **Required Parameters**: one or more parameter types.
-- **Optional Parameters**: none.
-
-Examples:
-
-* `Variant[Integer, Float]` --- matches any integer or floating point number (equivalent to `Numeric`).
-* `Variant[Enum['true', 'false'], Boolean]` --- matches `'true'`, `'false'`, `true`, or `false`.
 
 ### Any
 
