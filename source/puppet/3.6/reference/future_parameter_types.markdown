@@ -12,7 +12,7 @@ Puppet's parameter types fall into three basic categories:
 * **Collection** types specify arrays and hashes.
 * **Abstract** types add flexibility by specifying multiple types at once.
 
-Most types accept one or more *parameters* which follow the type name in a comma-separated list wrapped in angle brackets. For example, the `Integer` type takes up to two parameters -- minimum and maximum value -- so `Integer[0, 10]` means "an integer from 0 to 10." Parameters are usually optional, but a few types require them.
+Most types accept one or more **parameters** which follow the type name in a comma-separated list wrapped in angle brackets. For example, the `Integer` type takes up to two parameters --- minimum and maximum value --- so `Integer[0, 10]` means "an integer from 0 to 10." Parameters are usually optional, but a few types require them.
 
 ## Scalar Types
 
@@ -20,122 +20,122 @@ These are the most specific types available in the Puppet language, representing
 
 ### Integer
 
-Matches: whole numbers of any size within the limits of available memory. The `default` minimum and maximum values are `-Infinity` and `Infinity`, respectively.
-Required Parameters: none.
-Optional Parameters: minimum value, maximum value.
+- **Matches**: whole numbers of any size within the limits of available memory. The `default` minimum and maximum values are `-Infinity` and `Infinity`, respectively.
+- **Required Parameters**: none.
+- **Optional Parameters**: minimum value, maximum value.
 
 Examples:
 
-* `Integer` -- matches any integer.
-* `Integer[0]` -- matches any integer greater than or equal to 0
-* `Integer[default, 0]` -- matches any integer less than or equal to 0.
-* `Integer[2, 8]` -- matches any integer from 2 to 8, inclusive
+* `Integer` --- matches any integer.
+* `Integer[0]` --- matches any integer greater than or equal to 0.
+* `Integer[default, 0]` --- matches any integer less than or equal to 0.
+* `Integer[2, 8]` --- matches any integer from 2 to 8, inclusive.
 
 ### Float
 
-Matches: floating point numbers within the limitations of Ruby's [Float class](http://www.ruby-doc.org/core-2.1.2/Float.html).
-Required Parameters: none.
-Optional Parameters: minimum value, maximum value.
+- **Matches**: floating point numbers within the limitations of Ruby's [Float class](http://www.ruby-doc.org/core-2.1.2/Float.html).
+- **Required Parameters**: none.
+- **Optional Parameters**: minimum value, maximum value.
 
 Examples:
 
-* `Float` -- any integer
-* `Float[1.6]` -- any floating point number greater than or equal to 1.6
-* `Float[1.6, 3.501]` -- any floating point number from 1.6 to 3.501, inclusive
+* `Float` --- matches any integer.
+* `Float[1.6]` --- matches any floating point number greater than or equal to 1.6.
+* `Float[1.6, 3.501]` --- matches any floating point number from 1.6 to 3.501, inclusive.
 
 ### Boolean
 
-Matches: `true` or `false`
-Required Parameters: none.
-Optional Parameters: none.
+- **Matches**: `true` or `false`.
+- **Required Parameters**: none.
+- **Optional Parameters**: none.
 
 ### Regexp
 
-Matches: regular expressions. Not to be confused with the `Pattern` type, which matches strings.
-Required Parameters: none.
-Optional Parameters: accepts a regex pattern for exact comparison.
+- **Matches**: regular expressions. Not to be confused with the `Pattern` type, which matches strings.
+- **Required Parameters**: none.
+- **Optional Parameters**: accepts a regex pattern for exact comparison.
 
 Examples:
 
-* `Regexp` -- matches any regular expression.
-* `Regexp[/foo/]` -- matches the regular expression `/foo/` only.
+* `Regexp` --- matches any regular expression.
+* `Regexp[/foo/]` --- matches the regular expression `/foo/` only.
 
 ### String
 
-Matches: strings.
-Required Parameters: none.
-Optional Parameters: minimum length, maximum length.
+- **Matches**: strings.
+- **Required Parameters**: none.
+- **Optional Parameters**: minimum length, maximum length.
 
 For more details on String and its subtypes `Pattern` and `Enum`, see the [String Parameter Type](future_string_type.html) page.
 
 ## Collection Types
 
-The collection types are the simplest way to match arrays or classes, but also the least flexible.
+The collection types are the simplest way to match arrays or classes, but also the least flexible. The abstract [Tuple](#tuple) and [Struct](#struct) types provide a bit more fine control over arrays and hashes.
 
 ### Array
 
-Matches: arrays.
-Required Parameters: none.
-Optional Parameters: type, minimum size, maximum size.
+- **Matches**: arrays.
+- **Required Parameters**: none.
+- **Optional Parameters**: type, minimum size, maximum size.
 
 Note: Arrays in Puppet can contain any number of distinct types, while the `Array` parameter type only lets you specify one. You can use [abstract types](future_abstract_types.html) to express more nuanced type requirements (see the last two examples below). Another way to define an array that contains multiple types is with the [`Tuple` type](#tuple).
 
 Examples:
 
-* `Array` -- matches an array of any type or length.
-* `Array[String]` -- matches an array of any size that contains only strings.
-* `Array[Integer, 6]` -- matches an array containing at least six integers.
-* `Array[Float, 6, 12]` -- matches an array containing at least six and at most 12 floating-point numbers.
-* `Array[ Variant[String, Integer] ]` -- matches an array of any size that contains only strings and/or integers.
-* `Array[Any, 2]` -- matches an array containing at least two elements, no matter what type those elements are.
+* `Array` --- matches an array of any type or length.
+* `Array[String]` --- matches an array of any size that contains only strings.
+* `Array[Integer, 6]` --- matches an array containing at least six integers.
+* `Array[Float, 6, 12]` --- matches an array containing at least six and at most 12 floating-point numbers.
+* `Array[ Variant[String, Integer] ]` --- matches an array of any size that contains only strings and/or integers.
+* `Array[Any, 2]` --- matches an array containing at least two elements, no matter what type those elements are.
 
 ### Hash
 
-Matches: hash maps.
-Required Parameters: none.
-Optional Parameters: key type, value type, minimum length (in pairs), maximum length (in pairs).
+- **Matches**: hash maps.
+- **Required Parameters**: none.
+- **Optional Parameters**: key type, value type, minimum length (in pairs), maximum length (in pairs).
 
 Note: Hashes in Puppet can contain any number of distinct key-value types, while the `Hash` parameter type only lets you specify a single type for each. You can use [abstract types](future_abstract_types.html) to express more nuanced type requirements. Another way to define a hash that contains multiple types is with the [`Struct` type](#struct).
 
 Examples:
 
-* `Hash` -- matches any hash map.
-* `Hash[String]` -- matches any hash map that uses only strings as keys.
-* `Hash[Integer, String]` -- matches a hash map that uses integers for keys and strings for values.
-* `Hash[Integer, String, 1]` -- same as above, but requires a non-empty hash map.
-* `Hash[Integer, String, 1, 8]` -- same as above, but with a maximum size of eight key-value pairs.
+* `Hash` --- matches any hash map.
+* `Hash[String]` --- matches any hash map that uses only strings as keys.
+* `Hash[Integer, String]` --- matches a hash map that uses integers for keys and strings for values.
+* `Hash[Integer, String, 1]` --- same as above, but requires a non-empty hash map.
+* `Hash[Integer, String, 1, 8]` --- same as above, but with a maximum size of eight key-value pairs.
 
 ## Abstract Types
 
 ### Collection
 
-Matches: an instance of Array or Hash.
-Required Parameters: none.
-Optional Parameters: none.
+- **Matches**: an instance of Array or Hash.
+- **Required Parameters**: none.
+- **Optional Parameters**: none.
 
 Note: the `Collection` type is equivalent to `Variant[Array, Hash]`.
 
 ### Scalar
 
-Matches: an instance of Integer, Float, String, Boolean, or Regexp.
-Required Parameters: none.
-Optional Parameters: none.
+- **Matches**: an instance of Integer, Float, String, Boolean, or Regexp.
+- **Required Parameters**: none.
+- **Optional Parameters**: none.
 
 Note: the `Scalar` type is equivalent to `Variant[Integer, Float, String, Boolean, Regexp]`.
 
 ### Numeric
 
-Matches: an instance of Integer or Float.
-Required Parameters: none.
-Optional Parameters: none.
+- **Matches**: an instance of Integer or Float.
+- **Required Parameters**: none.
+- **Optional Parameters**: none.
 
 Note: the `Numeric` type is equivalent to `Variant[Integer, Float]`.
 
 ### Data
 
-Matches: an instance of `Scalar`, `Array[Data]`, or `Hash[Scalar, Data]`.
-Required Parameters: none.
-Optional Parameters: none.
+- **Matches**: an instance of `Scalar`, `Array[Data]`, or `Hash[Scalar, Data]`.
+- **Required Parameters**: none.
+- **Optional Parameters**: none.
 
 Note: this type is closely related to the Scalar type, but it also matches arrays of scalars or hashes with scalar/data values. The definition is recursive, so you can nest scalar values in any number of hashes or arrays.
 
@@ -150,58 +150,58 @@ Examples of types that match `Data`:
 
 ### Tuple
 
-Matches: same as Array, but specifies the type of each element.
-Required Parameters: the type of each element in the array.
-Optional Parameters: minimum size, maximum size. If you specify a minimum size of `1`, then everything after the first element is optional. Supplying a high maximum size means that the last element (and only the last element) may occur a variable number of times.
+- **Matches**: same as Array, but specifies the type of each element.
+- **Required Parameters**: the type of each element in the array.
+- **Optional Parameters**: minimum size, maximum size. If you specify a minimum size of `1`, then everything after the first element is optional. Supplying a high maximum size means that the last element (and only the last element) may occur a variable number of times.
 
 Examples:
 
-* `Tuple[String, Integer]` -- matches a two-element array containing a string followed by an integer.
-* `Tuple[String, Integer, 1]` -- matches above **or** a one-element array containing only a string.
-* `Tuple[String, Integer, 1, 4]` -- matches an array containing one string followed by 0 to 3 integers.
-* `Tuple[String, Integer, 1, default]` -- matches an array containing one string followed by any number of integers.
+* `Tuple[String, Integer]` --- matches a two-element array containing a string followed by an integer.
+* `Tuple[String, Integer, 1]` --- matches above **or** a one-element array containing only a string.
+* `Tuple[String, Integer, 1, 4]` --- matches an array containing one string followed by 0 to 3 integers.
+* `Tuple[String, Integer, 1, default]` --- matches an array containing one string followed by any number of integers.
 
 ### Struct
 
-Matches: same as Hash, but specifies the type of every key and value.
-Required Parameters: a hash containing `key => Type` pairs. In order to validate the input hash, the value of each key must match its type declaration.
-Optional Parameters: none.
+- **Matches**: same as Hash, but specifies the type of every key and value.
+- **Required Parameters**: a hash containing `key => Type` pairs. In order to validate the input hash, the value of each key must match its type declaration.
+- **Optional Parameters**: none.
 
 Note: Keys that are missing in the input hash are treated as `undef`. That means that it's possible to have optional keys in a Struct, as long as the corresponding type is compatible with `undef` (i.e., `Optional` or `Any`).
 
 Examples:
 
 * `Struct[{mode => Enum[read, write, update],
-           path => String[1]}]` -- matches a hash with both `mode` and `path` keys, the values of which must match `Enum['read', 'write', 'update']` and `String[1]`, respectively.
+           path => String[1]}]` --- matches a hash with both `mode` and `path` keys, the values of which must match `Enum['read', 'write', 'update']` and `String[1]`, respectively.
 * `Struct[{filename => String[1],
-           path     => Optional[String [1]]}]` -- same as above, but the `path` key is optional. If present, it must match `String[1]`.
+           path     => Optional[String [1]]}]` --- same as above, but the `path` key is optional. If present, it must match `String[1]`.
 
 ### Optional
 
-Matches: an instance of a given type, or `undef`.
-Required Parameters: a single parameter type.
-Optional Parameters: none.
+- **Matches**: an instance of a given type, or `undef`.
+- **Required Parameters**: a single parameter type.
+- **Optional Parameters**: none.
 
 Examples:
 
-* `Optional[String]` -- matches any string or `undef`.
-* `Optional[Array[Integer[0, 10]]]` -- matches an array of integers between 0 and 10, or `undef`.
+* `Optional[String]` --- matches any string or `undef`.
+* `Optional[Array[Integer[0, 10]]]` --- matches an array of integers between 0 and 10, or `undef`.
 
 ### Variant
 
-Matches: anything that matches at least one of the given parameter types.
-Required Parameters: one or more parameter types.
-Optional Parameters: none.
+- **Matches**: anything that matches at least one of the given parameter types.
+- **Required Parameters**: one or more parameter types.
+- **Optional Parameters**: none.
 
 Examples:
 
-* `Variant[Integer, Float]` -- matches any integer or floating point number (equivalent to `Numeric`).
-* `Variant[Enum['true', 'false'], Boolean]` -- matches `'true'`, `'false'`, `true`, or `false`.
+* `Variant[Integer, Float]` --- matches any integer or floating point number (equivalent to `Numeric`).
+* `Variant[Enum['true', 'false'], Boolean]` --- matches `'true'`, `'false'`, `true`, or `false`.
 
 ### Any
 
-Matches: anything at all, including `undef`.
-Required Parameters: none.
-Optional Parameters: none.
+- **Matches**: anything at all, including `undef`.
+- **Required Parameters**: none.
+- **Optional Parameters**: none.
 
 Note: the `Any` parameter type is the default, and will never fail to match.
