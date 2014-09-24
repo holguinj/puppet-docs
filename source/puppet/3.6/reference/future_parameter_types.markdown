@@ -4,15 +4,19 @@ title: "Future Language: Parameter Types"
 canonical: "/puppet/latest/reference/future_parameter_types.html"
 ---
 
-## Puppet Types
+## Puppet's Parameter Types
 
-* Types. Got a lot of them. Some are concrete, some are abstract. Got a couple of collection types, too.
-* Most of them take a set of parameters. Sometimes the parameters are required, sometimes they're optional.
-* Optional parameters have to be given in order. If you want to "skip" the first optional parameter, you can sort of do that with `default`.
+Puppet's parameter types fall into three basic categories:
+
+* **Scalar** types specify a range of individual values, like numbers and strings.
+* **Collection** types specify arrays and hashes.
+* **Abstract** types add flexibility by specifying multiple types at once.
+
+Most types accept one or more *parameters* which follow the type name in a comma-separated list wrapped in angle brackets. For example, the `Integer` type takes up to two parameters -- minimum and maximum value -- so `Integer[0, 10]` means "an integer from 0 to 10." Parameters are usually optional, but a few types require them.
 
 ## Scalar Types
 
-These are the most specific types available in the Puppet language, representing individual values like numbers and strings.
+These are the most specific types available in the Puppet language, representing individual values like numbers and strings. Note that none of the scalar types match `undef`.
 
 ### Integer([minimum size, maximum size])
 
