@@ -18,7 +18,7 @@ Most types accept one or more *parameters* which follow the type name in a comma
 
 These are the most specific types available in the Puppet language, representing individual values like numbers and strings. Note that none of the scalar types match `undef`.
 
-### Integer([minimum size, maximum size])
+### Integer
 
 Matches: whole numbers of any size within the limits of available memory. The `default` minimum and maximum values are `-Infinity` and `Infinity`, respectively.
 Required Parameters: none.
@@ -31,7 +31,7 @@ Examples:
 * `Integer[default, 0]` -- matches any integer less than or equal to 0.
 * `Integer[2, 8]` -- matches any integer from 2 to 8, inclusive
 
-### Float([minimum size, maximum size])
+### Float
 
 Matches: floating point numbers within the limitations of Ruby's [Float class](http://www.ruby-doc.org/core-2.1.2/Float.html).
 Required Parameters: none.
@@ -49,7 +49,7 @@ Matches: `true` or `false`
 Required Parameters: none.
 Optional Parameters: none.
 
-### Regexp([pattern])
+### Regexp
 
 Matches: regular expressions. Not to be confused with the `Pattern` type, which matches strings.
 Required Parameters: none.
@@ -60,7 +60,7 @@ Examples:
 * `Regexp` -- matches any regular expression.
 * `Regexp[/foo/]` -- matches the regular expression `/foo/` only.
 
-### String([minimum length, maximum length])
+### String
 
 Matches: strings.
 Required Parameters: none.
@@ -72,7 +72,7 @@ For more details on String and its subtypes `Pattern` and `Enum`, see the [Strin
 
 The collection types are the simplest way to match arrays or classes, but also the least flexible.
 
-### Array([Type, minimum length, maximum length])
+### Array
 
 Matches: arrays.
 Required Parameters: none.
@@ -89,7 +89,7 @@ Examples:
 * `Array[ Variant[String, Integer] ]` -- matches an array of any size that contains only strings and/or integers.
 * `Array[Any, 2]` -- matches an array containing at least two elements, no matter what type those elements are.
 
-### Hash([Type (key), Type (value), minimum length, maximum length])
+### Hash
 
 Matches: hash maps.
 Required Parameters: none.
@@ -148,7 +148,7 @@ Examples of types that match `Data`:
 * `Hash[String, Array[Integer]]`
 * `Array[Hash[String, Array[Integer]]]`
 
-### Tuple[Type 1(, Type 2, ...)]
+### Tuple
 
 Matches: same as Array, but specifies the type of each element.
 Required Parameters: the type of each element in the array.
@@ -161,7 +161,7 @@ Examples:
 * `Tuple[String, Integer, 1, 4]` -- matches an array containing one string followed by 0 to 3 integers.
 * `Tuple[String, Integer, 1, default]` -- matches an array containing one string followed by any number of integers.
 
-### Struct[{keys => Types}]
+### Struct
 
 Matches: same as Hash, but specifies the type of every key and value.
 Required Parameters: a hash containing `key => Type` pairs. In order to validate the input hash, the value of each key must match its type declaration.
@@ -176,7 +176,7 @@ Examples:
 * `Struct[{filename => String[1],
            path     => Optional[String [1]]}]` -- same as above, but the `path` key is optional. If present, it must match `String[1]`.
 
-### Optional[Type]
+### Optional
 
 Matches: an instance of a given type, or `undef`.
 Required Parameters: a single parameter type.
@@ -187,7 +187,7 @@ Examples:
 * `Optional[String]` -- matches any string or `undef`.
 * `Optional[Array[Integer[0, 10]]]` -- matches an array of integers between 0 and 10, or `undef`.
 
-### Variant [Type 1(, Type 2, ...)]
+### Variant
 
 Matches: anything that matches at least one of the given parameter types.
 Required Parameters: one or more parameter types.
