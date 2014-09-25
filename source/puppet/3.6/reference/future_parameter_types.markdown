@@ -10,7 +10,7 @@ Puppet's parameter types fall into three basic categories:
 
 * **Scalar** types specify a range of individual values, like numbers and strings.
 * **Collection** types specify arrays and hashes.
-* **Abstract** types add flexibility by specifying multiple types at once.
+* **Abstract** types are defined in terms of scalar and/or collection types, but add an additional level of flexibility.
 
 Most types accept one or more **parameters** which follow the type name in a comma-separated list wrapped in angle brackets. For example, the `Integer` type takes up to two parameters --- minimum and maximum value --- so `Integer[0, 10]` means "an integer from 0 to 10." Parameters are usually optional, but a few types require them.
 
@@ -66,7 +66,13 @@ Examples:
 - **Required Parameters**: none.
 - **Optional Parameters**: minimum length, maximum length.
 
-For more details on String and its subtypes `Pattern` and `Enum`, see the [String Parameter Type](future_string_type.html) page.
+Note: the String type also has two subtypes: [Enum](#enum), for matching one of a list of strings, and [Pattern](#pattern), for matching against one or more regular expressions.
+
+Examples:
+
+* `String` --- matches a string of any length.
+* `String[6]` --- matches a string with *at least* 6 characters.
+* `String[6, 8]` --- matches a string with at least 6 and at most 8 characters.
 
 ## Collection Types
 
@@ -106,14 +112,6 @@ Examples:
 * `Hash[Integer, String, 1, 8]` --- same as above, but with a maximum size of eight key-value pairs.
 
 ## Abstract Types
-
-### Collection
-
-- **Matches**: an instance of Array or Hash.
-- **Required Parameters**: none.
-- **Optional Parameters**: none.
-
-Note: the `Collection` type is equivalent to `Variant[Array, Hash]`.
 
 ### Variant
 
@@ -158,6 +156,44 @@ Examples of types that match `Data`:
 * `Hash[String, Integer]`
 * `Hash[String, Array[Integer]]`
 * `Array[Hash[String, Array[Integer]]]`
+
+### Pattern
+
+- **Matches**: a string that matches at least one of the given regular expressions.
+- **Required Parameters**: one or more regular expressions.
+- **Optional Parameters**: none.
+
+Note:
+
+* Additional options like `i` (case insensitive) are not supported.
+* Capture groups are not supported.
+* `Pattern` is a subtype of `String`, so it will only match strings.
+
+Examples:
+
+* `Pattern[/^[a-z].*/]` --- matches any string that begins with a lowercase letter.
+* `Pattern[/^[a-z].*/, /^none$/]` --- matches above **or** the exact string `"none"`.
+
+### Enum
+
+- **Matches**: one of the exact strings given as parameters.
+- **Required Parameters**: one or more strings.
+- **Optional Parameters**: none.
+
+Note: Enum is a subtype of String, so it will only match strings.
+
+Examples:
+
+* `Enum['stopped', 'running']` --- matches a string that is either `'stopped'` or `'running'`.
+* `Enum['true', 'false']` --- matches a string that is either `'true'` or `'false'`. Will not match `true` or `false` (without quotes).
+
+### Collection
+
+- **Matches**: an instance of Array or Hash.
+- **Required Parameters**: none.
+- **Optional Parameters**: none.
+
+Note: the `Collection` type is equivalent to `Variant[Array, Hash]`.
 
 ### Tuple
 
@@ -204,4 +240,4 @@ Examples:
 - **Required Parameters**: none.
 - **Optional Parameters**: none.
 
-Note: the `Any` parameter type is the default, and will never fail to match.
+Note: parameters that are not given an explicit type are assumed to by of `Any` type, which will never fail to match.
