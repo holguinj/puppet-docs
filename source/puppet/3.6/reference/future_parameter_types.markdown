@@ -218,10 +218,17 @@ Note: Keys that are missing in the input hash are treated as `undef`. That means
 
 Examples:
 
-* `Struct[{mode => Enum[read, write, update],
-           path => String[1]}]` --- matches a hash with both `mode` and `path` keys, the values of which must match `Enum['read', 'write', 'update']` and `String[1]`, respectively.
-* `Struct[{filename => String[1],
-           path     => Optional[String [1]]}]` --- same as above, but the `path` key is optional. If present, it must match `String[1]`.
+{%highlight ruby %}
+Struct[{mode => Enum[read, write, update],
+        path => String[1]}]
+{% endhighlight %}
+This matches a hash with both `mode` and `path` keys, the values of which must match `Enum['read', 'write', 'update']` and `String[1]`, respectively.
+
+{%highlight ruby %}
+Struct[{filename => String[1],
+        path     => Optional[String [1]]}]
+{% endhighlight %}
+This matches the same as the previous example, but the `path` key is optional. If present, it must match `String[1]`.
 
 ### Optional
 
